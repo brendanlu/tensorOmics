@@ -11,8 +11,8 @@
 #'
 #' @param x Numerical array input.
 #' @param mat Function which defines the tubal transform.
-#' @param bpparam A \linkS4class{BiocParallelParam} object indicating the type
-#' of parallelisation.
+#' @param bpparam A \link[BiocParallel]{BiocParallelParam-class} object
+#' indicating the type of parallelisation.
 #' @return A tensor of the same size under the specified tubal transform,
 #' denoted \eqn{\hat{x}}.
 #' @author Brendan Lu
@@ -97,8 +97,8 @@
 #'
 #' @param m_mat Function which defines the tubal transform.
 #' @param m_inv_mat Function which defines inverse tubal transform
-#' @param bpparam A \linkS4class{BiocParallelParam} object indicating the type
-#' of parallelisation.
+#' @param bpparam A \link[BiocParallel]{BiocParallelParam-class} object
+#' indicating the type of parallelisation.
 #' @return
 #' \item{m}{A function which applies the matrix m_mat along the last dimension
 #' of a given numerical input array. For 3D tensors it performs the mode-3
@@ -138,8 +138,8 @@ matrix_to_m_transforms <- function(
 #' to Scipys DCTI-ii algorithm with \code{norm='ortho'}.
 #'
 #' @param t The length of the transform.
-#' @param bpparam A \linkS4class{BiocParallelParam} object indicating the type
-#' of parallelisation.
+#' @param bpparam A \link[BiocParallel]{BiocParallelParam-class} object
+#' indicating the type of parallelisation.
 #' @return
 #' \item{m}{A function which applies the dct-ii along the last dimension of a
 #' given numerical input array. For 3D tensors it performs the mode-3 product
@@ -211,8 +211,8 @@ dctii_m_transforms <- function(t, bpparam = NULL) {
 #' tensor inputs.
 #'
 #' @param ... Arbitrary number of numerical tensor inputs.
-#' @param bpparam A \linkS4class{BiocParallelParam} object indicating the type
-#' of parallelisation.
+#' @param bpparam A \link[BiocParallel]{BiocParallelParam-class} object
+#' indicating the type of parallelisation.
 #' @return Cumulative facewise product.
 #' @author Brendan Lu
 #' @export
@@ -254,9 +254,9 @@ ft <- function(tensor) facewise_transpose(tensor)
 #' @param ... Arbitrary number of numerical tensor inputs.
 #' @param m A function which applies an orthogonal tensor tubal transform.
 #' @param minv The inverse of m.
-#' @param bpparam A \linkS4class{BiocParallelParam} object indicating the type
-#' of parallelisation. Does not have any effect if transform functions
-#' explicitly set using \code{m}, \code{minv}.
+#' @param bpparam A \link[BiocParallel]{BiocParallelParam-class} object
+#' indicating the type of parallelisation. Does not have any effect if transform
+#' functions explicitly set using \code{m}, \code{minv}.
 #' @return Cumulative m-product.
 #' @author Brendan Lu
 #' @export

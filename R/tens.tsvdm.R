@@ -16,9 +16,9 @@
 #' @param svals_matrix_form Setting to TRUE will return a compressed version of
 #' the singular values tensor S, where the singular values of each f-diagonal
 #' frontal slice becomes the column of a matrix, with t columns in total.
-#' @param bpparam A \linkS4class{BiocParallelParam} object indicating the type
-#' of parallelisation. Does not have any effect if transform functions
-#' explicitly set using \code{m}, \code{minv}.
+#' @param bpparam A \link[BiocParallel]{BiocParallelParam-class} object
+#' indicating the type of parallelisation. Does not have any effect if transform
+#' functions explicitly set using \code{m}, \code{minv}.
 #' @author Brendan Lu
 #' @export
 tsvdm <- function(

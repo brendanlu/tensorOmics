@@ -1,0 +1,728 @@
+{
+  "R": {
+    "Version": "4.5.1",
+    "Repositories": [
+      {
+        "Name": "BioCsoft",
+        "URL": "https://bioconductor.org/packages/3.21/bioc"
+      },
+      {
+        "Name": "BioCann",
+        "URL": "https://bioconductor.org/packages/3.21/data/annotation"
+      },
+      {
+        "Name": "BioCexp",
+        "URL": "https://bioconductor.org/packages/3.21/data/experiment"
+      },
+      {
+        "Name": "BioCworkflows",
+        "URL": "https://bioconductor.org/packages/3.21/workflows"
+      },
+      {
+        "Name": "BioCbooks",
+        "URL": "https://bioconductor.org/packages/3.21/books"
+      },
+      {
+        "Name": "CRAN",
+        "URL": "https://mirror.aarnet.edu.au/pub/CRAN"
+      }
+    ]
+  },
+  "Bioconductor": {
+    "Version": "3.21"
+  },
+  "Packages": {
+    "BH": {
+      "Package": "BH",
+      "Version": "1.87.0-1",
+      "Source": "Repository",
+      "Type": "Package",
+      "Title": "Boost C++ Header Files",
+      "Date": "2024-12-17",
+      "Authors@R": "c(person(\"Dirk\", \"Eddelbuettel\", role = c(\"aut\", \"cre\"), email = \"edd@debian.org\", comment = c(ORCID = \"0000-0001-6419-907X\")), person(\"John W.\", \"Emerson\", role = \"aut\"),  person(\"Michael J.\", \"Kane\", role = \"aut\",  comment = c(ORCID = \"0000-0003-1899-6662\")))",
+      "Description": "Boost provides free peer-reviewed portable C++ source  libraries.  A large part of Boost is provided as C++ template code which is resolved entirely at compile-time without linking.  This  package aims to provide the most useful subset of Boost libraries  for template use among CRAN packages. By placing these libraries in  this package, we offer a more efficient distribution system for CRAN  as replication of this code in the sources of other packages is  avoided. As of release 1.84.0-0, the following Boost libraries are included: 'accumulators' 'algorithm' 'align' 'any' 'atomic' 'beast' 'bimap' 'bind' 'circular_buffer' 'compute' 'concept' 'config' 'container' 'date_time' 'detail' 'dynamic_bitset' 'exception' 'flyweight' 'foreach' 'functional' 'fusion' 'geometry' 'graph' 'heap' 'icl' 'integer' 'interprocess' 'intrusive' 'io' 'iostreams' 'iterator' 'lambda2' 'math' 'move' 'mp11' 'mpl' 'multiprecision' 'numeric' 'pending' 'phoenix' 'polygon' 'preprocessor' 'process' 'propery_tree' 'qvm' 'random' 'range' 'scope_exit' 'smart_ptr' 'sort' 'spirit' 'tuple' 'type_traits' 'typeof' 'unordered' 'url' 'utility' 'uuid'.",
+      "License": "BSL-1.0",
+      "URL": "https://github.com/eddelbuettel/bh, https://dirk.eddelbuettel.com/code/bh.html",
+      "BugReports": "https://github.com/eddelbuettel/bh/issues",
+      "NeedsCompilation": "no",
+      "Author": "Dirk Eddelbuettel [aut, cre] (<https://orcid.org/0000-0001-6419-907X>), John W. Emerson [aut], Michael J. Kane [aut] (<https://orcid.org/0000-0003-1899-6662>)",
+      "Maintainer": "Dirk Eddelbuettel <edd@debian.org>",
+      "Repository": "CRAN"
+    },
+    "BiocManager": {
+      "Package": "BiocManager",
+      "Version": "1.30.26",
+      "Source": "Repository",
+      "Title": "Access the Bioconductor Project Package Repository",
+      "Description": "A convenient tool to install and update Bioconductor packages.",
+      "Authors@R": "c( person(\"Martin\", \"Morgan\", email = \"martin.morgan@roswellpark.org\", role = \"aut\", comment = c(ORCID = \"0000-0002-5874-8148\")), person(\"Marcel\", \"Ramos\", email = \"marcel.ramos@sph.cuny.edu\", role = c(\"aut\", \"cre\"), comment = c(ORCID = \"0000-0002-3242-0582\")))",
+      "Imports": [
+        "utils"
+      ],
+      "Suggests": [
+        "BiocVersion",
+        "BiocStyle",
+        "remotes",
+        "rmarkdown",
+        "testthat",
+        "withr",
+        "curl",
+        "knitr"
+      ],
+      "URL": "https://bioconductor.github.io/BiocManager/",
+      "BugReports": "https://github.com/Bioconductor/BiocManager/issues",
+      "VignetteBuilder": "knitr",
+      "License": "Artistic-2.0",
+      "Encoding": "UTF-8",
+      "RoxygenNote": "7.3.2",
+      "NeedsCompilation": "no",
+      "Author": "Martin Morgan [aut] (ORCID: <https://orcid.org/0000-0002-5874-8148>), Marcel Ramos [aut, cre] (ORCID: <https://orcid.org/0000-0002-3242-0582>)",
+      "Maintainer": "Marcel Ramos <marcel.ramos@sph.cuny.edu>",
+      "Repository": "CRAN"
+    },
+    "BiocParallel": {
+      "Package": "BiocParallel",
+      "Version": "1.42.2",
+      "Source": "Bioconductor",
+      "Type": "Package",
+      "Title": "Bioconductor facilities for parallel evaluation",
+      "Authors@R": "c( person(\"Martin\", \"Morgan\", email = \"mtmorgan.bioc@gmail.com\", role=c(\"aut\", \"cre\")), person(\"Jiefei\", \"Wang\", role = \"aut\"), person(\"Valerie\", \"Obenchain\", role=\"aut\"), person(\"Michel\", \"Lang\", email=\"michellang@gmail.com\", role=\"aut\"), person(\"Ryan\", \"Thompson\", email=\"rct@thompsonclan.org\", role=\"aut\"), person(\"Nitesh\", \"Turaga\", role=\"aut\"), person(\"Aaron\", \"Lun\", role = \"ctb\"), person(\"Henrik\", \"Bengtsson\", role = \"ctb\"), person(\"Madelyn\", \"Carlson\", role = \"ctb\", comment = \"Translated 'Random Numbers' vignette from Sweave to RMarkdown / HTML.\" ), person(\"Phylis\", \"Atieno\", role = \"ctb\", comment = \"Translated 'Introduction to BiocParallel' vignette from Sweave to Rmarkdown / HTML.\" ), person( \"Sergio\", \"Oller\", role = \"ctb\", comment = c( \"Improved bpmapply() efficiency.\", \"ORCID\" = \"0000-0002-8994-1549\" ) ))",
+      "Description": "This package provides modified versions and novel implementation of functions for parallel evaluation, tailored to use with Bioconductor objects.",
+      "URL": "https://github.com/Bioconductor/BiocParallel",
+      "BugReports": "https://github.com/Bioconductor/BiocParallel/issues",
+      "biocViews": "Infrastructure",
+      "License": "GPL-2 | GPL-3 | BSL-1.0",
+      "SystemRequirements": "C++11",
+      "Depends": [
+        "methods",
+        "R (>= 4.1.0)"
+      ],
+      "Imports": [
+        "stats",
+        "utils",
+        "futile.logger",
+        "parallel",
+        "snow",
+        "codetools"
+      ],
+      "Suggests": [
+        "BiocGenerics",
+        "tools",
+        "foreach",
+        "BBmisc",
+        "doParallel",
+        "GenomicRanges",
+        "RNAseqData.HNRNPC.bam.chr14",
+        "TxDb.Hsapiens.UCSC.hg19.knownGene",
+        "VariantAnnotation",
+        "Rsamtools",
+        "GenomicAlignments",
+        "ShortRead",
+        "RUnit",
+        "BiocStyle",
+        "knitr",
+        "batchtools",
+        "data.table"
+      ],
+      "Enhances": [
+        "Rmpi"
+      ],
+      "Collate": "AllGenerics.R DeveloperInterface.R prototype.R bploop.R ErrorHandling.R log.R bpbackend-methods.R bpisup-methods.R bplapply-methods.R bpiterate-methods.R bpstart-methods.R bpstop-methods.R BiocParallelParam-class.R bpmapply-methods.R bpschedule-methods.R bpvec-methods.R bpvectorize-methods.R bpworkers-methods.R bpaggregate-methods.R bpvalidate.R SnowParam-class.R MulticoreParam-class.R TransientMulticoreParam-class.R register.R SerialParam-class.R DoparParam-class.R SnowParam-utils.R BatchtoolsParam-class.R progress.R ipcmutex.R worker-number.R utilities.R rng.R bpinit.R reducer.R worker.R bpoptions.R cpp11.R BiocParallel-defunct.R",
+      "LinkingTo": [
+        "BH (>= 1.87.0)",
+        "cpp11"
+      ],
+      "VignetteBuilder": "knitr",
+      "RoxygenNote": "7.1.2",
+      "git_url": "https://git.bioconductor.org/packages/BiocParallel",
+      "git_branch": "RELEASE_3_21",
+      "git_last_commit": "dbadae1",
+      "git_last_commit_date": "2025-07-17",
+      "Repository": "Bioconductor 3.21",
+      "NeedsCompilation": "yes",
+      "Author": "Martin Morgan [aut, cre], Jiefei Wang [aut], Valerie Obenchain [aut], Michel Lang [aut], Ryan Thompson [aut], Nitesh Turaga [aut], Aaron Lun [ctb], Henrik Bengtsson [ctb], Madelyn Carlson [ctb] (Translated 'Random Numbers' vignette from Sweave to RMarkdown / HTML.), Phylis Atieno [ctb] (Translated 'Introduction to BiocParallel' vignette from Sweave to Rmarkdown / HTML.), Sergio Oller [ctb] (Improved bpmapply() efficiency., ORCID: <https://orcid.org/0000-0002-8994-1549>)",
+      "Maintainer": "Martin Morgan <mtmorgan.bioc@gmail.com>"
+    },
+    "BiocVersion": {
+      "Package": "BiocVersion",
+      "Version": "3.21.1",
+      "Source": "Bioconductor",
+      "Title": "Set the appropriate version of Bioconductor packages",
+      "Description": "This package provides repository information for the appropriate version of Bioconductor.",
+      "Authors@R": "c( person(\"Martin\", \"Morgan\", email = \"martin.morgan@roswellpark.org\", role = \"aut\"), person(\"Marcel\", \"Ramos\", email = \"marcel.ramos@sph.cuny.edu\", role = \"ctb\"), person(\"Bioconductor\", \"Package Maintainer\", email  = \"maintainer@bioconductor.org\", role = c(\"ctb\", \"cre\")))",
+      "biocViews": "Infrastructure",
+      "Depends": [
+        "R (>= 4.5.0)"
+      ],
+      "License": "Artistic-2.0",
+      "Encoding": "UTF-8",
+      "RoxygenNote": "6.0.1",
+      "git_url": "https://git.bioconductor.org/packages/BiocVersion",
+      "git_branch": "devel",
+      "git_last_commit": "1e5e5af",
+      "git_last_commit_date": "2024-10-29",
+      "Repository": "Bioconductor 3.21",
+      "NeedsCompilation": "no",
+      "Author": "Martin Morgan [aut], Marcel Ramos [ctb], Bioconductor Package Maintainer [ctb, cre]",
+      "Maintainer": "Bioconductor Package Maintainer <maintainer@bioconductor.org>"
+    },
+    "MASS": {
+      "Package": "MASS",
+      "Version": "7.3-65",
+      "Source": "Repository",
+      "Priority": "recommended",
+      "Date": "2025-02-19",
+      "Revision": "$Rev: 3681 $",
+      "Depends": [
+        "R (>= 4.4.0)",
+        "grDevices",
+        "graphics",
+        "stats",
+        "utils"
+      ],
+      "Imports": [
+        "methods"
+      ],
+      "Suggests": [
+        "lattice",
+        "nlme",
+        "nnet",
+        "survival"
+      ],
+      "Authors@R": "c(person(\"Brian\", \"Ripley\", role = c(\"aut\", \"cre\", \"cph\"), email = \"Brian.Ripley@R-project.org\"), person(\"Bill\", \"Venables\", role = c(\"aut\", \"cph\")), person(c(\"Douglas\", \"M.\"), \"Bates\", role = \"ctb\"), person(\"Kurt\", \"Hornik\", role = \"trl\", comment = \"partial port ca 1998\"), person(\"Albrecht\", \"Gebhardt\", role = \"trl\", comment = \"partial port ca 1998\"), person(\"David\", \"Firth\", role = \"ctb\", comment = \"support functions for polr\"))",
+      "Description": "Functions and datasets to support Venables and Ripley, \"Modern Applied Statistics with S\" (4th edition, 2002).",
+      "Title": "Support Functions and Datasets for Venables and Ripley's MASS",
+      "LazyData": "yes",
+      "ByteCompile": "yes",
+      "License": "GPL-2 | GPL-3",
+      "URL": "http://www.stats.ox.ac.uk/pub/MASS4/",
+      "Contact": "<MASS@stats.ox.ac.uk>",
+      "NeedsCompilation": "yes",
+      "Author": "Brian Ripley [aut, cre, cph], Bill Venables [aut, cph], Douglas M. Bates [ctb], Kurt Hornik [trl] (partial port ca 1998), Albrecht Gebhardt [trl] (partial port ca 1998), David Firth [ctb] (support functions for polr)",
+      "Maintainer": "Brian Ripley <Brian.Ripley@R-project.org>",
+      "Repository": "CRAN"
+    },
+    "Matrix": {
+      "Package": "Matrix",
+      "Version": "1.7-4",
+      "Source": "Repository",
+      "VersionNote": "do also bump src/version.h, inst/include/Matrix/version.h",
+      "Date": "2025-08-27",
+      "Priority": "recommended",
+      "Title": "Sparse and Dense Matrix Classes and Methods",
+      "Description": "A rich hierarchy of sparse and dense matrix classes, including general, symmetric, triangular, and diagonal matrices with numeric, logical, or pattern entries.  Efficient methods for operating on such matrices, often wrapping the 'BLAS', 'LAPACK', and 'SuiteSparse' libraries.",
+      "License": "GPL (>= 2) | file LICENCE",
+      "URL": "https://Matrix.R-forge.R-project.org",
+      "BugReports": "https://R-forge.R-project.org/tracker/?atid=294&group_id=61",
+      "Contact": "Matrix-authors@R-project.org",
+      "Authors@R": "c(person(\"Douglas\", \"Bates\", role = \"aut\", comment = c(ORCID = \"0000-0001-8316-9503\")), person(\"Martin\", \"Maechler\", role = c(\"aut\", \"cre\"), email = \"mmaechler+Matrix@gmail.com\", comment = c(ORCID = \"0000-0002-8685-9910\")), person(\"Mikael\", \"Jagan\", role = \"aut\", comment = c(ORCID = \"0000-0002-3542-2938\")), person(\"Timothy A.\", \"Davis\", role = \"ctb\", comment = c(ORCID = \"0000-0001-7614-6899\", \"SuiteSparse libraries\", \"collaborators listed in dir(system.file(\\\"doc\\\", \\\"SuiteSparse\\\", package=\\\"Matrix\\\"), pattern=\\\"License\\\", full.names=TRUE, recursive=TRUE)\")), person(\"George\", \"Karypis\", role = \"ctb\", comment = c(ORCID = \"0000-0003-2753-1437\", \"METIS library\", \"Copyright: Regents of the University of Minnesota\")), person(\"Jason\", \"Riedy\", role = \"ctb\", comment = c(ORCID = \"0000-0002-4345-4200\", \"GNU Octave's condest() and onenormest()\", \"Copyright: Regents of the University of California\")), person(\"Jens\", \"Oehlschlägel\", role = \"ctb\", comment = \"initial nearPD()\"), person(\"R Core Team\", role = \"ctb\", comment = c(ROR = \"02zz1nj61\", \"base R's matrix implementation\")))",
+      "Depends": [
+        "R (>= 4.4)",
+        "methods"
+      ],
+      "Imports": [
+        "grDevices",
+        "graphics",
+        "grid",
+        "lattice",
+        "stats",
+        "utils"
+      ],
+      "Suggests": [
+        "MASS",
+        "datasets",
+        "sfsmisc",
+        "tools"
+      ],
+      "Enhances": [
+        "SparseM",
+        "graph"
+      ],
+      "LazyData": "no",
+      "LazyDataNote": "not possible, since we use data/*.R and our S4 classes",
+      "BuildResaveData": "no",
+      "Encoding": "UTF-8",
+      "NeedsCompilation": "yes",
+      "Author": "Douglas Bates [aut] (ORCID: <https://orcid.org/0000-0001-8316-9503>), Martin Maechler [aut, cre] (ORCID: <https://orcid.org/0000-0002-8685-9910>), Mikael Jagan [aut] (ORCID: <https://orcid.org/0000-0002-3542-2938>), Timothy A. Davis [ctb] (ORCID: <https://orcid.org/0000-0001-7614-6899>, SuiteSparse libraries, collaborators listed in dir(system.file(\"doc\", \"SuiteSparse\", package=\"Matrix\"), pattern=\"License\", full.names=TRUE, recursive=TRUE)), George Karypis [ctb] (ORCID: <https://orcid.org/0000-0003-2753-1437>, METIS library, Copyright: Regents of the University of Minnesota), Jason Riedy [ctb] (ORCID: <https://orcid.org/0000-0002-4345-4200>, GNU Octave's condest() and onenormest(), Copyright: Regents of the University of California), Jens Oehlschlägel [ctb] (initial nearPD()), R Core Team [ctb] (ROR: <https://ror.org/02zz1nj61>, base R's matrix implementation)",
+      "Maintainer": "Martin Maechler <mmaechler+Matrix@gmail.com>",
+      "Repository": "CRAN"
+    },
+    "RSpectra": {
+      "Package": "RSpectra",
+      "Version": "0.16-2",
+      "Source": "Repository",
+      "Type": "Package",
+      "Title": "Solvers for Large-Scale Eigenvalue and SVD Problems",
+      "Date": "2024-07-18",
+      "Authors@R": "c( person(\"Yixuan\", \"Qiu\", , \"yixuan.qiu@cos.name\", c(\"aut\", \"cre\")), person(\"Jiali\", \"Mei\", , \"vermouthmjl@gmail.com\", \"aut\", comment = \"Function interface of matrix operation\"), person(\"Gael\", \"Guennebaud\", , \"gael.guennebaud@inria.fr\", \"ctb\", comment = \"Eigenvalue solvers from the 'Eigen' library\"), person(\"Jitse\", \"Niesen\", , \"jitse@maths.leeds.ac.uk\", \"ctb\", comment = \"Eigenvalue solvers from the 'Eigen' library\") )",
+      "Description": "R interface to the 'Spectra' library <https://spectralib.org/> for large-scale eigenvalue and SVD problems. It is typically used to compute a few eigenvalues/vectors of an n by n matrix, e.g., the k largest eigenvalues, which is usually more efficient than eigen() if k << n. This package provides the 'eigs()' function that does the similar job as in 'Matlab', 'Octave', 'Python SciPy' and 'Julia'. It also provides the 'svds()' function to calculate the largest k singular values and corresponding singular vectors of a real matrix. The matrix to be computed on can be dense, sparse, or in the form of an operator defined by the user.",
+      "License": "MPL (>= 2)",
+      "URL": "https://github.com/yixuan/RSpectra",
+      "BugReports": "https://github.com/yixuan/RSpectra/issues",
+      "Depends": [
+        "R (>= 3.0.2)"
+      ],
+      "Imports": [
+        "Matrix (>= 1.1-0)",
+        "Rcpp (>= 0.11.5)"
+      ],
+      "Suggests": [
+        "knitr",
+        "rmarkdown",
+        "prettydoc"
+      ],
+      "LinkingTo": [
+        "Rcpp",
+        "RcppEigen (>= 0.3.3.3.0)"
+      ],
+      "VignetteBuilder": "knitr, rmarkdown",
+      "RoxygenNote": "7.1.2",
+      "NeedsCompilation": "yes",
+      "Author": "Yixuan Qiu [aut, cre], Jiali Mei [aut] (Function interface of matrix operation), Gael Guennebaud [ctb] (Eigenvalue solvers from the 'Eigen' library), Jitse Niesen [ctb] (Eigenvalue solvers from the 'Eigen' library)",
+      "Maintainer": "Yixuan Qiu <yixuan.qiu@cos.name>",
+      "Repository": "CRAN"
+    },
+    "Rcpp": {
+      "Package": "Rcpp",
+      "Version": "1.1.0",
+      "Source": "Repository",
+      "Title": "Seamless R and C++ Integration",
+      "Date": "2025-07-01",
+      "Authors@R": "c(person(\"Dirk\", \"Eddelbuettel\", role = c(\"aut\", \"cre\"), email = \"edd@debian.org\", comment = c(ORCID = \"0000-0001-6419-907X\")), person(\"Romain\", \"Francois\", role = \"aut\", comment = c(ORCID = \"0000-0002-2444-4226\")), person(\"JJ\", \"Allaire\", role = \"aut\", comment = c(ORCID = \"0000-0003-0174-9868\")), person(\"Kevin\", \"Ushey\", role = \"aut\", comment = c(ORCID = \"0000-0003-2880-7407\")), person(\"Qiang\", \"Kou\", role = \"aut\", comment = c(ORCID = \"0000-0001-6786-5453\")), person(\"Nathan\", \"Russell\", role = \"aut\"), person(\"Iñaki\", \"Ucar\", role = \"aut\", comment = c(ORCID = \"0000-0001-6403-5550\")), person(\"Doug\", \"Bates\", role = \"aut\", comment = c(ORCID = \"0000-0001-8316-9503\")), person(\"John\", \"Chambers\", role = \"aut\"))",
+      "Description": "The 'Rcpp' package provides R functions as well as C++ classes which offer a seamless integration of R and C++. Many R data types and objects can be mapped back and forth to C++ equivalents which facilitates both writing of new code as well as easier integration of third-party libraries. Documentation about 'Rcpp' is provided by several vignettes included in this package, via the 'Rcpp Gallery' site at <https://gallery.rcpp.org>, the paper by Eddelbuettel and Francois (2011, <doi:10.18637/jss.v040.i08>), the book by Eddelbuettel (2013, <doi:10.1007/978-1-4614-6868-4>) and the paper by Eddelbuettel and Balamuta (2018, <doi:10.1080/00031305.2017.1375990>); see 'citation(\"Rcpp\")' for details.",
+      "Imports": [
+        "methods",
+        "utils"
+      ],
+      "Suggests": [
+        "tinytest",
+        "inline",
+        "rbenchmark",
+        "pkgKitten (>= 0.1.2)"
+      ],
+      "URL": "https://www.rcpp.org, https://dirk.eddelbuettel.com/code/rcpp.html, https://github.com/RcppCore/Rcpp",
+      "License": "GPL (>= 2)",
+      "BugReports": "https://github.com/RcppCore/Rcpp/issues",
+      "MailingList": "rcpp-devel@lists.r-forge.r-project.org",
+      "RoxygenNote": "6.1.1",
+      "Encoding": "UTF-8",
+      "NeedsCompilation": "yes",
+      "Author": "Dirk Eddelbuettel [aut, cre] (ORCID: <https://orcid.org/0000-0001-6419-907X>), Romain Francois [aut] (ORCID: <https://orcid.org/0000-0002-2444-4226>), JJ Allaire [aut] (ORCID: <https://orcid.org/0000-0003-0174-9868>), Kevin Ushey [aut] (ORCID: <https://orcid.org/0000-0003-2880-7407>), Qiang Kou [aut] (ORCID: <https://orcid.org/0000-0001-6786-5453>), Nathan Russell [aut], Iñaki Ucar [aut] (ORCID: <https://orcid.org/0000-0001-6403-5550>), Doug Bates [aut] (ORCID: <https://orcid.org/0000-0001-8316-9503>), John Chambers [aut]",
+      "Maintainer": "Dirk Eddelbuettel <edd@debian.org>",
+      "Repository": "CRAN"
+    },
+    "RcppEigen": {
+      "Package": "RcppEigen",
+      "Version": "0.3.4.0.2",
+      "Source": "Repository",
+      "Type": "Package",
+      "Title": "'Rcpp' Integration for the 'Eigen' Templated Linear Algebra Library",
+      "Date": "2024-08-23",
+      "Authors@R": "c(person(\"Doug\", \"Bates\", role = \"aut\", comment = c(ORCID = \"0000-0001-8316-9503\")), person(\"Dirk\", \"Eddelbuettel\", role = c(\"aut\", \"cre\"), email = \"edd@debian.org\", comment = c(ORCID = \"0000-0001-6419-907X\")), person(\"Romain\", \"Francois\", role = \"aut\", comment = c(ORCID = \"0000-0002-2444-4226\")), person(\"Yixuan\", \"Qiu\", role = \"aut\", comment = c(ORCID = \"0000-0003-0109-6692\")), person(\"Authors of\", \"Eigen\", role = \"cph\", comment = \"Authorship and copyright in included Eigen library as detailed in inst/COPYRIGHTS\"))",
+      "Copyright": "See the file COPYRIGHTS for various Eigen copyright details",
+      "Description": "R and 'Eigen' integration using 'Rcpp'. 'Eigen' is a C++ template library for linear algebra: matrices, vectors, numerical solvers and related algorithms.  It supports dense and sparse matrices on integer, floating point and complex numbers, decompositions of such matrices, and solutions of linear systems. Its performance on many algorithms is comparable with some of the best implementations based on 'Lapack' and level-3 'BLAS'. The 'RcppEigen' package includes the header files from the 'Eigen' C++ template library. Thus users do not need to install 'Eigen' itself in order to use 'RcppEigen'. Since version 3.1.1, 'Eigen' is licensed under the Mozilla Public License (version 2); earlier version were licensed under the GNU LGPL version 3 or later. 'RcppEigen' (the 'Rcpp' bindings/bridge to 'Eigen') is licensed under the GNU GPL version 2 or later, as is the rest of 'Rcpp'.",
+      "License": "GPL (>= 2) | file LICENSE",
+      "LazyLoad": "yes",
+      "Depends": [
+        "R (>= 3.6.0)"
+      ],
+      "LinkingTo": [
+        "Rcpp"
+      ],
+      "Imports": [
+        "Rcpp (>= 0.11.0)",
+        "stats",
+        "utils"
+      ],
+      "Suggests": [
+        "Matrix",
+        "inline",
+        "tinytest",
+        "pkgKitten",
+        "microbenchmark"
+      ],
+      "URL": "https://github.com/RcppCore/RcppEigen, https://dirk.eddelbuettel.com/code/rcpp.eigen.html",
+      "BugReports": "https://github.com/RcppCore/RcppEigen/issues",
+      "NeedsCompilation": "yes",
+      "Author": "Doug Bates [aut] (<https://orcid.org/0000-0001-8316-9503>), Dirk Eddelbuettel [aut, cre] (<https://orcid.org/0000-0001-6419-907X>), Romain Francois [aut] (<https://orcid.org/0000-0002-2444-4226>), Yixuan Qiu [aut] (<https://orcid.org/0000-0003-0109-6692>), Authors of Eigen [cph] (Authorship and copyright in included Eigen library as detailed in inst/COPYRIGHTS)",
+      "Maintainer": "Dirk Eddelbuettel <edd@debian.org>",
+      "Repository": "CRAN"
+    },
+    "codetools": {
+      "Package": "codetools",
+      "Version": "0.2-20",
+      "Source": "Repository",
+      "Priority": "recommended",
+      "Author": "Luke Tierney <luke-tierney@uiowa.edu>",
+      "Description": "Code analysis tools for R.",
+      "Title": "Code Analysis Tools for R",
+      "Depends": [
+        "R (>= 2.1)"
+      ],
+      "Maintainer": "Luke Tierney <luke-tierney@uiowa.edu>",
+      "URL": "https://gitlab.com/luke-tierney/codetools",
+      "License": "GPL",
+      "NeedsCompilation": "no",
+      "Repository": "CRAN"
+    },
+    "cpp11": {
+      "Package": "cpp11",
+      "Version": "0.5.2",
+      "Source": "Repository",
+      "Title": "A C++11 Interface for R's C Interface",
+      "Authors@R": "c( person(\"Davis\", \"Vaughan\", email = \"davis@posit.co\", role = c(\"aut\", \"cre\"), comment = c(ORCID = \"0000-0003-4777-038X\")), person(\"Jim\",\"Hester\", role = \"aut\", comment = c(ORCID = \"0000-0002-2739-7082\")), person(\"Romain\", \"François\", role = \"aut\", comment = c(ORCID = \"0000-0002-2444-4226\")), person(\"Benjamin\", \"Kietzman\", role = \"ctb\"), person(\"Posit Software, PBC\", role = c(\"cph\", \"fnd\")) )",
+      "Description": "Provides a header only, C++11 interface to R's C interface.  Compared to other approaches 'cpp11' strives to be safe against long jumps from the C API as well as C++ exceptions, conform to normal R function semantics and supports interaction with 'ALTREP' vectors.",
+      "License": "MIT + file LICENSE",
+      "URL": "https://cpp11.r-lib.org, https://github.com/r-lib/cpp11",
+      "BugReports": "https://github.com/r-lib/cpp11/issues",
+      "Depends": [
+        "R (>= 4.0.0)"
+      ],
+      "Suggests": [
+        "bench",
+        "brio",
+        "callr",
+        "cli",
+        "covr",
+        "decor",
+        "desc",
+        "ggplot2",
+        "glue",
+        "knitr",
+        "lobstr",
+        "mockery",
+        "progress",
+        "rmarkdown",
+        "scales",
+        "Rcpp",
+        "testthat (>= 3.2.0)",
+        "tibble",
+        "utils",
+        "vctrs",
+        "withr"
+      ],
+      "VignetteBuilder": "knitr",
+      "Config/Needs/website": "tidyverse/tidytemplate",
+      "Config/testthat/edition": "3",
+      "Config/Needs/cpp11/cpp_register": "brio, cli, decor, desc, glue, tibble, vctrs",
+      "Encoding": "UTF-8",
+      "RoxygenNote": "7.3.2",
+      "NeedsCompilation": "no",
+      "Author": "Davis Vaughan [aut, cre] (<https://orcid.org/0000-0003-4777-038X>), Jim Hester [aut] (<https://orcid.org/0000-0002-2739-7082>), Romain François [aut] (<https://orcid.org/0000-0002-2444-4226>), Benjamin Kietzman [ctb], Posit Software, PBC [cph, fnd]",
+      "Maintainer": "Davis Vaughan <davis@posit.co>",
+      "Repository": "CRAN"
+    },
+    "formatR": {
+      "Package": "formatR",
+      "Version": "1.14",
+      "Source": "Repository",
+      "Type": "Package",
+      "Title": "Format R Code Automatically",
+      "Authors@R": "c( person(\"Yihui\", \"Xie\", role = c(\"aut\", \"cre\"), email = \"xie@yihui.name\", comment = c(ORCID = \"0000-0003-0645-5666\")), person(\"Ed\", \"Lee\", role = \"ctb\"), person(\"Eugene\", \"Ha\", role = \"ctb\"), person(\"Kohske\", \"Takahashi\", role = \"ctb\"), person(\"Pavel\", \"Krivitsky\", role = \"ctb\"), person() )",
+      "Description": "Provides a function tidy_source() to format R source code. Spaces and indent will be added to the code automatically, and comments will be preserved under certain conditions, so that R code will be more human-readable and tidy. There is also a Shiny app as a user interface in this package (see tidy_app()).",
+      "Depends": [
+        "R (>= 3.2.3)"
+      ],
+      "Suggests": [
+        "rstudioapi",
+        "shiny",
+        "testit",
+        "rmarkdown",
+        "knitr"
+      ],
+      "License": "GPL",
+      "URL": "https://github.com/yihui/formatR",
+      "BugReports": "https://github.com/yihui/formatR/issues",
+      "VignetteBuilder": "knitr",
+      "RoxygenNote": "7.2.3",
+      "Encoding": "UTF-8",
+      "NeedsCompilation": "no",
+      "Author": "Yihui Xie [aut, cre] (<https://orcid.org/0000-0003-0645-5666>), Ed Lee [ctb], Eugene Ha [ctb], Kohske Takahashi [ctb], Pavel Krivitsky [ctb]",
+      "Maintainer": "Yihui Xie <xie@yihui.name>",
+      "Repository": "CRAN"
+    },
+    "futile.logger": {
+      "Package": "futile.logger",
+      "Version": "1.4.3",
+      "Source": "Repository",
+      "Type": "Package",
+      "Title": "A Logging Utility for R",
+      "Date": "2016-07-10",
+      "Author": "Brian Lee Yung Rowe",
+      "Maintainer": "Brian Lee Yung Rowe <r@zatonovo.com>",
+      "Depends": [
+        "R (>= 3.0.0)"
+      ],
+      "Imports": [
+        "utils",
+        "lambda.r (>= 1.1.0)",
+        "futile.options"
+      ],
+      "Suggests": [
+        "testthat",
+        "jsonlite"
+      ],
+      "Description": "Provides a simple yet powerful logging utility. Based loosely on log4j, futile.logger takes advantage of R idioms to make logging a convenient and easy to use replacement for cat and print statements.",
+      "License": "LGPL-3",
+      "LazyLoad": "yes",
+      "NeedsCompilation": "no",
+      "ByteCompile": "yes",
+      "Collate": "'options.R' 'appender.R' 'constants.R' 'layout.R' 'logger.R' 'scat.R' 'futile.logger-package.R'",
+      "RoxygenNote": "5.0.1",
+      "Repository": "CRAN"
+    },
+    "futile.options": {
+      "Package": "futile.options",
+      "Version": "1.0.1",
+      "Source": "Repository",
+      "Type": "Package",
+      "Title": "Futile Options Management",
+      "Date": "2018-04-20",
+      "Author": "Brian Lee Yung Rowe",
+      "Maintainer": "Brian Lee Yung Rowe <r@zatonovo.com>",
+      "Depends": [
+        "R (>= 2.8.0)"
+      ],
+      "Description": "A scoped options management framework. Used in other packages.",
+      "License": "LGPL-3",
+      "LazyLoad": "yes",
+      "NeedsCompilation": "no",
+      "Repository": "CRAN"
+    },
+    "gsignal": {
+      "Package": "gsignal",
+      "Version": "0.3-7",
+      "Source": "Repository",
+      "Type": "Package",
+      "Title": "Signal Processing",
+      "Date": "2024-09-11",
+      "Authors@R": "c(person(\"Geert\", \"van Boxtel\", role = c(\"aut\", \"cre\"), email = \"G.J.M.vanBoxtel@gmail.com\", comment = \"Maintainer\"), person(\"Tom\", \"Short\", role = \"aut\", email = \"tshort@eprisolutions.com\", comment=\"Author of 'signal' package\"), person(\"Paul\", \"Kienzle\", role = \"aut\", comment = \"Majority of the original sources\"), person(\"Ben\", \"Abbott\", role = \"ctb\"), person(\"Juan\", \"Aguado\", role = \"ctb\"), person(\"Muthiah\", \"Annamalai\", role = \"ctb\"), person(\"Leonardo\", \"Araujo\", role = \"ctb\"), person(\"William\", \"Asquith\", role = \"ctb\"), person(\"David\", \"Bateman\", role = \"ctb\"), person(\"David\", \"Billinghurst\", role = \"ctb\"), person(\"Juan Pablo\", \"Carbajal\", role = \"ctb\"), person(\"André\", \"Carezia\", role = \"ctb\"), person(\"Vincent\", \"Cautaerts\", role = \"ctb\"), person(\"Eric\", \"Chassande-Mottin\", role = \"ctb\"), person(\"Luca\", \"Citi\", role = \"ctb\"), person(\"Dave\", \"Cogdell\", role = \"ctb\"), person(\"Carlo\", \"de Falco\", role = \"ctb\"), person(\"Carne\", \"Draug\", role = \"ctb\"), person(\"Pascal\", \"Dupuis\", role = \"ctb\"), person(\"John W.\", \"Eaton\", role = \"ctb\"), person(\"R.G.H\", \"Eschauzier\", role = \"ctb\"), person(\"Andrew\", \"Fitting\", role = \"ctb\"), person(\"Alan J.\", \"Greenberger\", role = \"ctb\"), person(\"Mike\", \"Gross\", role = \"ctb\"), person(\"Daniel\", \"Gunyan\", role = \"ctb\"), person(\"Kai\", \"Habel\", role = \"ctb\"), person(\"Kurt\", \"Hornik\", role = \"ctb\"), person(\"Jake\", \"Janovetz\", role = \"ctb\"), person(\"Alexander\", \"Klein\", role = \"ctb\"), person(\"Peter V.\", \"Lanspeary\", role = \"ctb\"), person(\"Bill\", \"Lash\", role = \"ctb\"), person(\"Friedrich\", \"Leissh\", role = \"ctb\"), person(\"Laurent S.\", \"Mazet\", role = \"ctb\"), person(\"Mike\", \"Miller\", role = \"ctb\"), person(\"Petr\", \"Mikulik\", role = \"ctb\"), person(\"Paolo\", \"Neis\", role = \"ctb\"), person(\"Georgios\", \"Ouzounis\", role = \"ctb\"), person(\"Sylvain\", \"Pelissier\", role = \"ctb\"), person(\"Francesco\", \"Potortì\", role = \"ctb\"), person(\"Charles\", \"Praplan\", role = \"ctb\"), person(\"Lukas F.\", \"Reichlin\", role = \"ctb\"), person(\"Tony\", \"Richardson\", role = \"ctb\"), person(\"Asbjorn\", \"Sabo\", role = \"ctb\"), person(\"Thomas\", \"Sailer\", role = \"ctb\"), person(\"Rolf\", \"Schirmacher\", role = \"ctb\"), person(\"Rolf\", \"Schirmacher\", role = \"ctb\"), person(\"Ivan\", \"Selesnick\", role = \"ctb\"), person(\"Julius O.\", \"Smith III\", role = \"ctb\"), person(\"Peter L.\", \"Soendergaard\", role = \"ctb\"), person(\"Quentin\", \"Spencer\", role = \"ctb\"), person(\"Doug\", \"Stewart\", role = \"ctb\"), person(\"P.\", \"Sudeepam\", role = \"ctb\"), person(\"Stefan\", \"van der Walt\", role = \"ctb\"), person(\"Andreas\", \"Weber\", role = \"ctb\"), person(\"P.\", \"Sudeepam\", role = \"ctb\"), person(\"Andreas\", \"Weingessel\", role = \"ctb\"))",
+      "Description": "R implementation of the 'Octave' package 'signal', containing a variety of signal processing tools, such as signal generation and measurement, correlation and convolution, filtering, filter design, filter analysis and conversion, power spectrum analysis, system identification, decimation and sample rate change, and windowing.",
+      "Depends": [
+        "R (>= 3.5.0)"
+      ],
+      "LinkingTo": [
+        "Rcpp"
+      ],
+      "Imports": [
+        "pracma",
+        "Rcpp",
+        "grDevices"
+      ],
+      "License": "GPL-3",
+      "Encoding": "UTF-8",
+      "Language": "en-US",
+      "URL": "https://github.com/gjmvanboxtel/gsignal",
+      "BugReports": "https://github.com/gjmvanboxtel/gsignal/issues",
+      "LazyData": "true",
+      "RoxygenNote": "7.3.2",
+      "Suggests": [
+        "knitr",
+        "rmarkdown",
+        "testthat",
+        "ggplot2",
+        "gridExtra",
+        "microbenchmark",
+        "covr"
+      ],
+      "VignetteBuilder": "knitr",
+      "NeedsCompilation": "yes",
+      "Author": "Geert van Boxtel [aut, cre] (Maintainer), Tom Short [aut] (Author of 'signal' package), Paul Kienzle [aut] (Majority of the original sources), Ben Abbott [ctb], Juan Aguado [ctb], Muthiah Annamalai [ctb], Leonardo Araujo [ctb], William Asquith [ctb], David Bateman [ctb], David Billinghurst [ctb], Juan Pablo Carbajal [ctb], André Carezia [ctb], Vincent Cautaerts [ctb], Eric Chassande-Mottin [ctb], Luca Citi [ctb], Dave Cogdell [ctb], Carlo de Falco [ctb], Carne Draug [ctb], Pascal Dupuis [ctb], John W. Eaton [ctb], R.G.H Eschauzier [ctb], Andrew Fitting [ctb], Alan J. Greenberger [ctb], Mike Gross [ctb], Daniel Gunyan [ctb], Kai Habel [ctb], Kurt Hornik [ctb], Jake Janovetz [ctb], Alexander Klein [ctb], Peter V. Lanspeary [ctb], Bill Lash [ctb], Friedrich Leissh [ctb], Laurent S. Mazet [ctb], Mike Miller [ctb], Petr Mikulik [ctb], Paolo Neis [ctb], Georgios Ouzounis [ctb], Sylvain Pelissier [ctb], Francesco Potortì [ctb], Charles Praplan [ctb], Lukas F. Reichlin [ctb], Tony Richardson [ctb], Asbjorn Sabo [ctb], Thomas Sailer [ctb], Rolf Schirmacher [ctb], Rolf Schirmacher [ctb], Ivan Selesnick [ctb], Julius O. Smith III [ctb], Peter L. Soendergaard [ctb], Quentin Spencer [ctb], Doug Stewart [ctb], P. Sudeepam [ctb], Stefan van der Walt [ctb], Andreas Weber [ctb], P. Sudeepam [ctb], Andreas Weingessel [ctb]",
+      "Maintainer": "Geert van Boxtel <G.J.M.vanBoxtel@gmail.com>",
+      "Repository": "CRAN"
+    },
+    "lambda.r": {
+      "Package": "lambda.r",
+      "Version": "1.2.4",
+      "Source": "Repository",
+      "Type": "Package",
+      "Title": "Modeling Data with Functional Programming",
+      "Date": "2019-09-15",
+      "Depends": [
+        "R (>= 3.0.0)"
+      ],
+      "Imports": [
+        "formatR"
+      ],
+      "Suggests": [
+        "testit"
+      ],
+      "Author": "Brian Lee Yung Rowe",
+      "Maintainer": "Brian Lee Yung Rowe <r@zatonovo.com>",
+      "Description": "A language extension to efficiently write functional programs in R. Syntax extensions include multi-part function definitions, pattern matching, guard statements, built-in (optional) type safety.",
+      "License": "LGPL-3",
+      "LazyLoad": "yes",
+      "NeedsCompilation": "no",
+      "Repository": "CRAN"
+    },
+    "lattice": {
+      "Package": "lattice",
+      "Version": "0.22-7",
+      "Source": "Repository",
+      "Date": "2025-03-31",
+      "Priority": "recommended",
+      "Title": "Trellis Graphics for R",
+      "Authors@R": "c(person(\"Deepayan\", \"Sarkar\", role = c(\"aut\", \"cre\"), email = \"deepayan.sarkar@r-project.org\", comment = c(ORCID = \"0000-0003-4107-1553\")), person(\"Felix\", \"Andrews\", role = \"ctb\"), person(\"Kevin\", \"Wright\", role = \"ctb\", comment = \"documentation\"), person(\"Neil\", \"Klepeis\", role = \"ctb\"), person(\"Johan\", \"Larsson\", role = \"ctb\", comment = \"miscellaneous improvements\"), person(\"Zhijian (Jason)\", \"Wen\", role = \"cph\", comment = \"filled contour code\"), person(\"Paul\", \"Murrell\", role = \"ctb\", email = \"paul@stat.auckland.ac.nz\"), person(\"Stefan\", \"Eng\", role = \"ctb\", comment = \"violin plot improvements\"), person(\"Achim\", \"Zeileis\", role = \"ctb\", comment = \"modern colors\"), person(\"Alexandre\", \"Courtiol\", role = \"ctb\", comment = \"generics for larrows, lpolygon, lrect and lsegments\") )",
+      "Description": "A powerful and elegant high-level data visualization system inspired by Trellis graphics, with an emphasis on multivariate data. Lattice is sufficient for typical graphics needs, and is also flexible enough to handle most nonstandard requirements. See ?Lattice for an introduction.",
+      "Depends": [
+        "R (>= 4.0.0)"
+      ],
+      "Suggests": [
+        "KernSmooth",
+        "MASS",
+        "latticeExtra",
+        "colorspace"
+      ],
+      "Imports": [
+        "grid",
+        "grDevices",
+        "graphics",
+        "stats",
+        "utils"
+      ],
+      "Enhances": [
+        "chron",
+        "zoo"
+      ],
+      "LazyLoad": "yes",
+      "LazyData": "yes",
+      "License": "GPL (>= 2)",
+      "URL": "https://lattice.r-forge.r-project.org/",
+      "BugReports": "https://github.com/deepayan/lattice/issues",
+      "NeedsCompilation": "yes",
+      "Author": "Deepayan Sarkar [aut, cre] (<https://orcid.org/0000-0003-4107-1553>), Felix Andrews [ctb], Kevin Wright [ctb] (documentation), Neil Klepeis [ctb], Johan Larsson [ctb] (miscellaneous improvements), Zhijian (Jason) Wen [cph] (filled contour code), Paul Murrell [ctb], Stefan Eng [ctb] (violin plot improvements), Achim Zeileis [ctb] (modern colors), Alexandre Courtiol [ctb] (generics for larrows, lpolygon, lrect and lsegments)",
+      "Maintainer": "Deepayan Sarkar <deepayan.sarkar@r-project.org>",
+      "Repository": "CRAN"
+    },
+    "pracma": {
+      "Package": "pracma",
+      "Version": "2.4.4",
+      "Source": "Repository",
+      "Type": "Package",
+      "Date": "2023-11-08",
+      "Title": "Practical Numerical Math Functions",
+      "Authors@R": "person(\"Hans W.\", \"Borchers\",  email=\"hwborchers@googlemail.com\",  role=c(\"aut\", \"cre\"))",
+      "Depends": [
+        "R (>= 3.1.0)"
+      ],
+      "Imports": [
+        "graphics",
+        "grDevices",
+        "stats",
+        "utils"
+      ],
+      "Suggests": [
+        "NlcOptim",
+        "quadprog"
+      ],
+      "Description": "Provides a large number of functions from numerical analysis and linear algebra, numerical optimization, differential equations, time series, plus some well-known special mathematical functions. Uses 'MATLAB' function names where appropriate to simplify porting.",
+      "License": "GPL (>= 3)",
+      "ByteCompile": "true",
+      "LazyData": "yes",
+      "NeedsCompilation": "no",
+      "Author": "Hans W. Borchers [aut, cre]",
+      "Maintainer": "Hans W. Borchers <hwborchers@googlemail.com>",
+      "Repository": "CRAN"
+    },
+    "rARPACK": {
+      "Package": "rARPACK",
+      "Version": "0.11-0",
+      "Source": "Repository",
+      "Type": "Package",
+      "Title": "Solvers for Large Scale Eigenvalue and SVD Problems",
+      "Date": "2016-03-07",
+      "Author": "Yixuan Qiu, Jiali Mei and authors of the ARPACK library. See file AUTHORS for details.",
+      "Maintainer": "Yixuan Qiu <yixuan.qiu@cos.name>",
+      "Description": "Previously an R wrapper of the 'ARPACK' library <http://www.caam.rice.edu/software/ARPACK/>, and now a shell of the R package 'RSpectra', an R interface to the 'Spectra' library <http://yixuan.cos.name/spectra/> for solving large scale eigenvalue/vector problems. The current version of 'rARPACK' simply imports and exports the functions provided by 'RSpectra'. New users of 'rARPACK' are advised to switch to the 'RSpectra' package.",
+      "License": "BSD_3_clause + file LICENSE",
+      "Copyright": "see file COPYRIGHTS",
+      "URL": "https://github.com/yixuan/rARPACK",
+      "BugReports": "https://github.com/yixuan/rARPACK/issues",
+      "Imports": [
+        "RSpectra"
+      ],
+      "Suggests": [
+        "Matrix (>= 1.1-0)"
+      ],
+      "RoxygenNote": "5.0.1",
+      "NeedsCompilation": "no",
+      "Repository": "CRAN"
+    },
+    "renv": {
+      "Package": "renv",
+      "Version": "1.1.5",
+      "Source": "Repository",
+      "Type": "Package",
+      "Title": "Project Environments",
+      "Authors@R": "c( person(\"Kevin\", \"Ushey\", role = c(\"aut\", \"cre\"), email = \"kevin@rstudio.com\", comment = c(ORCID = \"0000-0003-2880-7407\")), person(\"Hadley\", \"Wickham\", role = c(\"aut\"), email = \"hadley@rstudio.com\", comment = c(ORCID = \"0000-0003-4757-117X\")), person(\"Posit Software, PBC\", role = c(\"cph\", \"fnd\")) )",
+      "Description": "A dependency management toolkit for R. Using 'renv', you can create and manage project-local R libraries, save the state of these libraries to a 'lockfile', and later restore your library as required. Together, these tools can help make your projects more isolated, portable, and reproducible.",
+      "License": "MIT + file LICENSE",
+      "URL": "https://rstudio.github.io/renv/, https://github.com/rstudio/renv",
+      "BugReports": "https://github.com/rstudio/renv/issues",
+      "Imports": [
+        "utils"
+      ],
+      "Suggests": [
+        "BiocManager",
+        "cli",
+        "compiler",
+        "covr",
+        "cpp11",
+        "devtools",
+        "generics",
+        "gitcreds",
+        "jsonlite",
+        "jsonvalidate",
+        "knitr",
+        "miniUI",
+        "modules",
+        "packrat",
+        "pak",
+        "R6",
+        "remotes",
+        "reticulate",
+        "rmarkdown",
+        "rstudioapi",
+        "shiny",
+        "testthat",
+        "uuid",
+        "waldo",
+        "yaml",
+        "webfakes"
+      ],
+      "Encoding": "UTF-8",
+      "RoxygenNote": "7.3.2",
+      "VignetteBuilder": "knitr",
+      "Config/Needs/website": "tidyverse/tidytemplate",
+      "Config/testthat/edition": "3",
+      "Config/testthat/parallel": "true",
+      "Config/testthat/start-first": "bioconductor,python,install,restore,snapshot,retrieve,remotes",
+      "NeedsCompilation": "no",
+      "Author": "Kevin Ushey [aut, cre] (ORCID: <https://orcid.org/0000-0003-2880-7407>), Hadley Wickham [aut] (ORCID: <https://orcid.org/0000-0003-4757-117X>), Posit Software, PBC [cph, fnd]",
+      "Maintainer": "Kevin Ushey <kevin@rstudio.com>",
+      "Repository": "CRAN"
+    },
+    "snow": {
+      "Package": "snow",
+      "Version": "0.4-4",
+      "Source": "Repository",
+      "Title": "Simple Network of Workstations",
+      "Author": "Luke Tierney, A. J. Rossini, Na Li, H. Sevcikova",
+      "Description": "Support for simple parallel computing in R.",
+      "Maintainer": "Luke Tierney <luke-tierney@uiowa.edu>",
+      "Suggests": [
+        "rlecuyer"
+      ],
+      "Enhances": [
+        "Rmpi"
+      ],
+      "License": "GPL",
+      "Depends": [
+        "R (>= 2.13.1)",
+        "utils"
+      ],
+      "NeedsCompilation": "no",
+      "Repository": "CRAN"
+    }
+  }
+}

@@ -85,9 +85,9 @@
 #' organized by the magnitude of the corresponding singular vector, and place
 #' them into the columns of a matrix. Corresponds to the 'matrix compression'
 #' type of scheme described in Mor et al. 2022.
-#' @param bpparam A \linkS4class{BiocParallelParam} object indicating the type
-#' of parallelisation. Does not have any effect if transform functions
-#' explicitly set using \code{m}, \code{minv}.
+#' @param bpparam A \link[BiocParallel]{BiocParallelParam-class} object
+#' indicating the type of parallelisation. Does not have any effect if transform
+#' functions explicitly set using \code{m}, \code{minv}.
 #' @author Brendan Lu
 #' @export
 tpca <- function(

@@ -138,7 +138,7 @@
 #' @noRd
 .svd_solver <- function(mat, n, p) {
   if (n > 3 && p > 3) {
-    return(svds(mat, k = 1))
+    return(rARPACK::svds(mat, k = 1))
   } else {
     return(svd(mat, nu = 1, nv = 1))
   }
@@ -233,7 +233,7 @@
   # of Tenehaus
   for (j in primal_idxs) {
     # inverse of shrinkage estimate of covariance matrix
-    s_hat_inv[[j]] <- ginv(
+    s_hat_inv[[j]] <- MASS::ginv(
       tau[j] * diag(ps[[j]]) + (1 - tau[j]) * cov2(a[[j]])
     )
     # (A1.) 'sensible' starting point for a-tilde
@@ -254,7 +254,7 @@
     # need the non-inverted s_hat to calculate the initial normalized
     # "outer weight vector" on XXt, `gram_loadings`
     s_hat <- tau[j] * diag(n) + ((1 - tau[j]) / (n - 1)) * gram_mats[[j]]
-    s_hat_inv[[j]] <- ginv(s_hat)
+    s_hat_inv[[j]] <- MASS::ginv(s_hat)
     # (A1.) 'sensible' starting point for a-tilde for XXt instead of X
     init <- .svd_solver(a[[j]], n, ps[[j]])$u
     # (A2.) normalized outer weight vector for XXt instead of X
@@ -566,9 +566,9 @@
 #' formulation in the matrix RGCCA step that works with the gram matrix instead
 #' of the raw data. TRUE by default, only recommended to set to FALSE for
 #' testing purposes.
-#' @param bpparam A \linkS4class{BiocParallelParam} object indicating the type
-#' of parallelisation. Does not have any effect if transform functions
-#' explicitly set using \code{m}, \code{minv}.
+#' @param bpparam A \link[BiocParallel]{BiocParallelParam-class} object
+#' indicating the type of parallelisation. Does not have any effect if transform
+#' functions explicitly set using \code{m}, \code{minv}.
 #' @note When `design = "full"`, `tau = 1`, setting scheme to "horst",
 #' "factorial" or "centroid" yields method SUMCOV, SSQCOV, SABSCOV respectively.
 #'
