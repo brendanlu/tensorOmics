@@ -39,6 +39,18 @@ type of scheme described in Mor et al. 2022.}
 indicating the type of parallelisation. Does not have any effect if transform
 functions explicitly set using \code{m}, \code{minv}.}
 }
+\value{
+A list containing:
+\describe{
+\item{ncomp}{The number of components used.}
+\item{x}{The centered input tensor.}
+\item{loadings}{The loadings matrix or tensor.}
+\item{variates}{The projected data in the reduced space.}
+\item{explained_variance}{
+The proportion of variance explained by each component.
+}
+}
+}
 \description{
 Tensor analogue of PCA introduced by Mor et al. (2022) based on Kilmer's
 m-product algebra and tsvdm.

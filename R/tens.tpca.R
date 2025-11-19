@@ -88,6 +88,16 @@
 #' @param bpparam A \link[BiocParallel]{BiocParallelParam-class} object
 #' indicating the type of parallelisation. Does not have any effect if transform
 #' functions explicitly set using \code{m}, \code{minv}.
+#' @return A list containing:
+#' \describe{
+#'   \item{ncomp}{The number of components used.}
+#'   \item{x}{The centered input tensor.}
+#'   \item{loadings}{The loadings matrix or tensor.}
+#'   \item{variates}{The projected data in the reduced space.}
+#'   \item{explained_variance}{
+#'      The proportion of variance explained by each component.
+#'   }
+#' }
 #' @author Brendan Lu
 #' @export
 tpca <- function(
