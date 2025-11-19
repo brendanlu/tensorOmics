@@ -1,4 +1,4 @@
-Package: mixOmicsTemporal
+Package: tOmics
 Title: Temporal Omics Data Analysis Package
 Version: 0.0.0.9000
 Authors@R:

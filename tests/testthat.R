@@ -1,4 +1,4 @@
 library(testthat)
-library(mixOmicsTemporal)
+library(tOmics)
 
-test_check("mixOmicsTemporal")
+test_check("tOmics")
