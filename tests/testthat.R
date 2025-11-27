@@ -1,4 +1,4 @@
 library(testthat)
-library(tOmics)
+library(tensorOmics)
 
-test_check("tOmics")
+test_check("tensorOmics")
