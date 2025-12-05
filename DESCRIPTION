@@ -1,6 +1,7 @@
 Package: tensorOmics
 Title: Temporal Omics Data Analysis Package
 Version: 0.0.0.9000
+Depends: R (>= 4.5.0)
 Authors@R:
     c(
         person(given="Brendan", family="Lu", email="brendannlu5@gmail.com", role = c("aut", "cre")),

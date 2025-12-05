@@ -3,10 +3,9 @@
   "external.libraries": [],
   "ignored.packages": [],
   "package.dependency.fields": [
-    "Depends",
     "Imports",
-    "LinkingTo",
-    "Suggests"
+    "Depends",
+    "LinkingTo"
   ],
   "ppm.enabled": null,
   "ppm.ignored.urls": [],
