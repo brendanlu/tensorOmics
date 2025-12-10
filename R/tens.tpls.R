@@ -218,7 +218,8 @@ tpls <- function(
       y_projected <- .extract_tensor_columns(y_projected, k_t_flatten_sort)
     }
 
-    return(invisible(list(
+    # prepare output
+    output <- list(
       ncomp = ncomp,
       x = x,
       y = y,
@@ -226,7 +227,9 @@ tpls <- function(
       y_loadings = y_loadings,
       x_projected = x_projected,
       y_projected = y_projected
-    )))
+    )
+    class(output) <- "tpls"
+    return(invisible(output))
 
   } else if (mode == "canonical" || mode == "regression") {
     # there is lots of literature on this, e.g. Kim-Anh's mixOmics book, or
@@ -319,7 +322,8 @@ tpls <- function(
       y_projected[, i] <- curr_y_projected
     }
 
-    return(invisible(list(
+    # prepare output
+    output <- list(
       ncomp = ncomp,
       x = x,
       y = y,
@@ -330,7 +334,9 @@ tpls <- function(
       y_projected = y_projected,
       features = features,
       faces = faces
-    )))
+    )
+    class(output) <- "tpls"
+    return(invisible(output))
 
   } else {
     stop("Unexpected error in tpls, check 'mode' parameter input")

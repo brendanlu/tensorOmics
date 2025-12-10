@@ -72,7 +72,7 @@ block_tplsda <- function(
   }
 
   # note the rest of parameter validation will be done in the block_tpls call
-  return(invisible(block_tpls(
+  output <- block_tpls(
     a = a,
     y_ind = y_ind,
     ncomp = ncomp,
@@ -88,5 +88,7 @@ block_tplsda <- function(
     max_iter = max_iter,
     solve_dual = solve_dual,
     bpparam = bpparam
-  )))
+  )
+  class(output) <- "block_tplsda"
+  return(invisible(output))
 }

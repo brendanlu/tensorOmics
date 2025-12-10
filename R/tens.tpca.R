@@ -194,11 +194,14 @@ tpca <- function(
   # see _rank_q_truncation_zero_out() in `tred`
   # need to use this for tensor output to be appropriate
 
-  return(invisible(list(
+  # prepare output
+  output <- list(
     ncomp = ncomp,
     x = x,
     loadings = loadings,
     variates = x_projected, # bltodo: maybe just adopt a different name here?
     explained_variance = explained_variance_ratio[1:ncomp]
-  )))
+  )
+  class(output) <- "tpca"
+  return(invisible(output))
 }

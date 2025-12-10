@@ -805,7 +805,9 @@ block_tpls <- function(
 
   # BLTODO: need to decide if it is worth splitting X and Y blocks in the output
   # what will be more convenient for user...?
-  return(list(
+
+  # prepare output
+  output <- list(
     ncomp = ncomp,
     a = a,
     design = design,
@@ -816,5 +818,7 @@ block_tpls <- function(
     projected = tensor_blocks_projected,
     iters = iters,
     faces = faces
-  ))
+  )
+  class(output) <- "block_tpls"
+  return(invisible(output))
 }

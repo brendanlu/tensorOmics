@@ -139,7 +139,7 @@ tplsda <- function(
   }
 
   # note the rest of parameter validation will be done in tpls call
-  return(invisible(tpls(
+  output <- tpls(
     x = x,
     y = .create_indicator_tensor(y, multi_label, t),
     ncomp = ncomp,
@@ -148,5 +148,7 @@ tplsda <- function(
     mode = "regression",
     center = center,
     bpparam = bpparam
-  )))
+  )
+  class(output) <- "tplsda"
+  return(invisible(output))
 }
