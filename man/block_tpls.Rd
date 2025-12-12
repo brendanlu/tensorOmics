@@ -89,6 +89,7 @@ A list containing:
 \describe{
 \item{ncomp}{The number of components used.}
 \item{a}{The input list of centered tensor blocks.}
+\item{y_ind}{The index of the target block in \code{a}.}
 \item{design}{The design matrix used for block relationships.}
 \item{scheme}{The RGCCA scheme used ("horst", "factorial", "centroid").}
 \item{mode}{The PLS mode used ("canonical" or "regression").}
