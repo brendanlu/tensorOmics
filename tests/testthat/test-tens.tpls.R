@@ -192,6 +192,42 @@ test_that(
 )
 
 test_that(
+  "sense checks on the tpls returned features and faces items",
+  code = {
+    n <- 10
+    p <- 30
+    q <- 20
+    t <- 4
+    ncomp_input <- 3
+    modes_to_test <- c("regression", "tsvdm")
+
+    k <- min(n, p, q)
+
+    set.seed(1)
+    test_x <- array(rnorm(n * p * t, mean = 0, sd = 5), dim = c(n, p, t))
+    test_y <- array(rnorm(n * q * t, mean = 0, sd = 3), dim = c(n, q, t))
+    k <- min(n, p)
+
+    for (curr_mode in modes_to_test) {
+      tensor_pls <- tpls(
+        test_x,
+        test_y,
+        ncomp = ncomp_input,
+        mode = curr_mode
+        # matrix_output must be TRUE for this test, should be by default
+      )
+      expect_equal(tensor_pls$ncomp, ncomp_input)
+      expect_equal(length(tensor_pls$features), ncomp_input)
+      expect_equal(length(tensor_pls$faces), ncomp_input)
+      expect_equal(dim(tensor_pls$x_loadings), c(p, ncomp_input))
+      expect_equal(dim(tensor_pls$y_loadings), c(q, ncomp_input))
+      expect_equal(dim(tensor_pls$x_projected), c(n, ncomp_input))
+      expect_equal(dim(tensor_pls$y_projected), c(n, ncomp_input))
+    }
+  }
+)
+
+test_that(
   "tpls error for non-supported mode input",
   code = {
     n <- 4

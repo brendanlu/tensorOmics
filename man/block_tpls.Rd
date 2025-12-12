@@ -84,6 +84,21 @@ testing purposes.}
 indicating the type of parallelisation. Does not have any effect if transform
 functions explicitly set using \code{m}, \code{minv}.}
 }
+\value{
+A list containing:
+\describe{
+\item{ncomp}{The number of components used.}
+\item{a}{The input list of centered tensor blocks.}
+\item{design}{The design matrix used for block relationships.}
+\item{scheme}{The RGCCA scheme used ("horst", "factorial", "centroid").}
+\item{mode}{The PLS mode used ("canonical" or "regression").}
+\item{pairwise_scoring}{The pairwise_scoring method used.}
+\item{loadings}{List of loadings matrices per block (p_i x ncomp).}
+\item{projected}{List of projected variates per block (n x ncomp).}
+\item{iters}{Vector of iteration counts for each component.}
+\item{faces}{Vector of selected tensor face indices per component.}
+}
+}
 \description{
 Developed @ Melbourne Integrative Genomics.
 }

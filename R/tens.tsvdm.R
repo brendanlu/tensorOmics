@@ -19,6 +19,18 @@
 #' @param bpparam A \link[BiocParallel]{BiocParallelParam-class} object
 #' indicating the type of parallelisation. Does not have any effect if transform
 #' functions explicitly set using \code{m}, \code{minv}.
+#' @return A list containing:
+#' \describe{
+#'   \item{u}{Left m-product unitary tensor. If `keep_hats = TRUE`, the tensor
+#'   is returned in the m-transform space without the inverse transform
+#'   applied at the end, in this case, this return item is called `uhat`.}
+#'   \item{s}{Singular values as a tensor with f-diagonal structure, or a
+#'   compressed matrix of singular values of each tensor faceas columns when
+#'   `svals_matrix_form = TRUE` (named `shat` when `keep_hats = TRUE`).}
+#'   \item{v}{Right m-product unitary tensor. If `keep_hats = TRUE`, the tensor
+#'   is returned in the m-transform space without the inverse transform
+#'   applied at the end, in this case, this return item is called `vhat`.}
+#' }
 #' @author Brendan Lu
 #' @export
 tsvdm <- function(

@@ -124,6 +124,25 @@
 #' @param bpparam A \link[BiocParallel]{BiocParallelParam-class} object
 #' indicating the type of parallelisation. Does not have any effect if transform
 #' functions explicitly set using \code{m}, \code{minv}.
+#' @return A list containing:
+#' \describe{
+#'   \item{ncomp}{The number of components used.}
+#'   \item{x}{The centered input tensor X.}
+#'   \item{y}{The centered input tensor Y.}
+#'   \item{mode}{The PLS mode used: "canonical", "regression", or "tsvdm".}
+#'   \item{x_loadings}{Matrix of X loadings (p x ncomp), or loadings tensor
+#'   if `mode = "tsvdm"` AND `matrix_output = FALSE`.}
+#'   \item{y_loadings}{Matrix of Y loadings (q x ncomp), or loadings tensor
+#'   if `mode = "tsvdm"` AND `matrix_output = FALSE`.}
+#'   \item{x_projected}{Matrix of X projections (n x ncomp), or proections
+#'   tensor when `mode = "tsvdm"` AND `matrix_output = FALSE`.}
+#'   \item{y_projected}{Matrix of Y projections (n x ncomp), or proections
+#'   tensor when `mode = "tsvdm"` AND `matrix_output = FALSE`.}
+#'   \item{features}{Vector of selected feature indices per component (only
+#'   when `matrix_output = TRUE`).}
+#'   \item{faces}{Vector of selected tensor face indices per component (only
+#'   when `matrix_output = TRUE`).}
+#' }
 #' @author Brendan Lu
 #' @export
 tpls <- function(
@@ -212,6 +231,10 @@ tpls <- function(
         tsvdm_decomposition_xt_y$s,
         ncomp
       )
+      # populate features and faces from k_t_flatten_sort
+      features <- k_t_flatten_sort[1, ]
+      faces <- k_t_flatten_sort[2, ]
+      # fill return matrices
       x_loadings <- .extract_tensor_columns(x_loadings, k_t_flatten_sort)
       y_loadings <- .extract_tensor_columns(y_loadings, k_t_flatten_sort)
       x_projected <- .extract_tensor_columns(x_projected, k_t_flatten_sort)
@@ -226,7 +249,9 @@ tpls <- function(
       x_loadings = x_loadings,
       y_loadings = y_loadings,
       x_projected = x_projected,
-      y_projected = y_projected
+      y_projected = y_projected,
+      features = features,
+      faces = faces
     )
     class(output) <- "tpls"
     return(invisible(output))

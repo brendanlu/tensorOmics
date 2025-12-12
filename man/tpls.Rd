@@ -47,6 +47,27 @@ described in Mor et al. 2022.}
 indicating the type of parallelisation. Does not have any effect if transform
 functions explicitly set using \code{m}, \code{minv}.}
 }
+\value{
+A list containing:
+\describe{
+\item{ncomp}{The number of components used.}
+\item{x}{The centered input tensor X.}
+\item{y}{The centered input tensor Y.}
+\item{mode}{The PLS mode used: "canonical", "regression", or "tsvdm".}
+\item{x_loadings}{Matrix of X loadings (p x ncomp), or loadings tensor
+if \code{mode = "tsvdm"} AND \code{matrix_output = FALSE}.}
+\item{y_loadings}{Matrix of Y loadings (q x ncomp), or loadings tensor
+if \code{mode = "tsvdm"} AND \code{matrix_output = FALSE}.}
+\item{x_projected}{Matrix of X projections (n x ncomp), or proections
+tensor when \code{mode = "tsvdm"} AND \code{matrix_output = FALSE}.}
+\item{y_projected}{Matrix of Y projections (n x ncomp), or proections
+tensor when \code{mode = "tsvdm"} AND \code{matrix_output = FALSE}.}
+\item{features}{Vector of selected feature indices per component (only
+when \code{matrix_output = TRUE}).}
+\item{faces}{Vector of selected tensor face indices per component (only
+when \code{matrix_output = TRUE}).}
+}
+}
 \description{
 Developed @ Melbourne Integrative Genomics. Intuition: Fourier-based m
 transforms compact the data across time points, but preserve the information

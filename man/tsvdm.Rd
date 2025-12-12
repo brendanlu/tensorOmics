@@ -35,6 +35,20 @@ frontal slice becomes the column of a matrix, with t columns in total.}
 indicating the type of parallelisation. Does not have any effect if transform
 functions explicitly set using \code{m}, \code{minv}.}
 }
+\value{
+A list containing:
+\describe{
+\item{u}{Left m-product unitary tensor. If \code{keep_hats = TRUE}, the tensor
+is returned in the m-transform space without the inverse transform
+applied at the end, in this case, this return item is called \code{uhat}.}
+\item{s}{Singular values as a tensor with f-diagonal structure, or a
+compressed matrix of singular values of each tensor faceas columns when
+\code{svals_matrix_form = TRUE} (named \code{shat} when \code{keep_hats = TRUE}).}
+\item{v}{Right m-product unitary tensor. If \code{keep_hats = TRUE}, the tensor
+is returned in the m-transform space without the inverse transform
+applied at the end, in this case, this return item is called \code{vhat}.}
+}
+}
 \description{
 Return the t-SVDM decomposition from Kilmer et al. (2021).
 }
