@@ -143,6 +143,9 @@ tplsda <- function(
     t <- dim(x)[3]
   }
 
+  # make a copy of the original y
+  y_original_copy <- y
+
   # note the rest of parameter validation will be done in tpls call
   output <- tpls(
     x = x,
@@ -154,7 +157,7 @@ tplsda <- function(
     center = center,
     bpparam = bpparam
   )
-  output$y_original <- y
+  output$y_original <- y_original_copy
   class(output) <- "tplsda"
   return(invisible(output))
 }
