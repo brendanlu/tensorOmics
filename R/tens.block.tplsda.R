@@ -21,6 +21,9 @@
 #' @param multi_label Set to TRUE if y contains repeated class measurements
 #' across the t timepoints specified in the x tensor.
 #'
+#' @inherit block_tpls return
+#' @return Adds \code{y_original}: the original labels input
+#' (vector/matrix/tensor) passed to \code{block_tplsda()}.
 #' @author Brendan Lu
 #' @export
 block_tplsda <- function(
@@ -48,6 +51,9 @@ block_tplsda <- function(
   } else {
     t <- dim(x[[1]])[3]
   }
+
+  # make a copy of the original y
+  y_original_copy <- y
 
   # create and add the "Y" target tensor into the end of the list
   a <- x
@@ -89,6 +95,7 @@ block_tplsda <- function(
     solve_dual = solve_dual,
     bpparam = bpparam
   )
+  output$y_original <- y_original_copy
   class(output) <- "block_tplsda"
   return(invisible(output))
 }

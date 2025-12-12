@@ -89,6 +89,10 @@ testing purposes.}
 indicating the type of parallelisation. Does not have any effect if transform
 functions explicitly set using \code{m}, \code{minv}.}
 }
+\value{
+Adds \code{y_original}: the original labels input
+(vector/matrix/tensor) passed to \code{block_tplsda()}.
+}
 \description{
 Developed @ Melbourne Integrative Genomics.
 }
