@@ -2,8 +2,7 @@
 % Please edit documentation in R/tens.tplsda.R
 \name{tplsda}
 \alias{tplsda}
-\title{Run tensor PLSDA-like analysis. Note this always returns a compressed-matrix
-form output.}
+\title{Run tensor PLS-DA analysis}
 \usage{
 tplsda(
   x,
@@ -41,7 +40,14 @@ slices sum to 0, analgous to centering matrix data.}
 indicating the type of parallelisation. Does not have any effect if transform
 functions explicitly set using \code{m}, \code{minv}.}
 }
+\value{
+Adds \code{y_original}: the original labels input
+(vector/matrix/tensor) passed to \code{tplsda()}.
+}
 \description{
+Note: always returns a compressed-matrix form output.
+}
+\details{
 Developed @ Melbourne Integrative Genomics
 }
 \author{

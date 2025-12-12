@@ -106,8 +106,9 @@
   return(y)
 }
 
-#' Run tensor PLSDA-like analysis. Note this always returns a compressed-matrix
-#' form output.
+#' Run tensor PLS-DA analysis
+#'
+#' Note: always returns a compressed-matrix form output.
 #'
 #' Developed @ Melbourne Integrative Genomics
 #'
@@ -117,6 +118,10 @@
 #' n x t matrix / n x 1 x t tensor if `multi_label == TRUE`.
 #' @param multi_label Set to `TRUE` if y contains repeated class measurements
 #' across the t timepoints specified in the x tensor.
+#'
+#' @inherit tpls return
+#' @return Adds \code{y_original}: the original labels input
+#' (vector/matrix/tensor) passed to \code{tplsda()}.
 #'
 #' @author Brendan Lu
 #' @export
@@ -149,6 +154,7 @@ tplsda <- function(
     center = center,
     bpparam = bpparam
   )
+  output$y_original <- y
   class(output) <- "tplsda"
   return(invisible(output))
 }
