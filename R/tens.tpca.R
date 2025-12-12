@@ -94,9 +94,8 @@
 #'   \item{x}{The centered input tensor.}
 #'   \item{loadings}{The loadings matrix or tensor.}
 #'   \item{variates}{The projected data in the reduced space.}
-#'   \item{explained_variance}{
-#'      The proportion of variance explained by each component.
-#'}
+#'   \item{explained_variance}{The proportion of variance explained by each
+#'   component.}
 #' }
 #' @author Brendan Lu
 #' @export
