@@ -826,7 +826,7 @@ block_tpls <- function(
     ncomp = ncomp,
     a = a,
     y_ind = y_ind,
-    design = design,
+    design = validated_design,
     scheme = scheme,
     mode = mode,
     pairwise_scoring = pairwise_scoring,
