@@ -94,8 +94,6 @@
 #'   \item{x}{The centered input tensor.}
 #'   \item{loadings}{The loadings matrix or tensor.}
 #'   \item{variates}{The projected data in the reduced space.}
-#'   \item{explained_variance}{The proportion of variance explained by each
-#'   component.}
 #' }
 #' @author Brendan Lu
 #' @export
@@ -198,8 +196,8 @@ tpca <- function(
     ncomp = ncomp,
     x = x,
     loadings = loadings,
-    variates = x_projected, # bltodo: maybe just adopt a different name here?
-    explained_variance = explained_variance_ratio[1:ncomp]
+    variates = x_projected # bltodo: maybe just adopt a different name here?
+    # bltodo theory: explained_variance = explained_variance_ratio[1:ncomp]
   )
   class(output) <- "tpca"
   return(invisible(output))

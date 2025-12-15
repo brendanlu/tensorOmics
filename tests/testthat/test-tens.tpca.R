@@ -23,7 +23,9 @@ test_that(
     ncomp_input <- 2
     test_tensor <- array(1:(n * p * t), dim = c(n, p, t))
     tpca_obj <- tpca(test_tensor, ncomp = ncomp_input)
-    expect_equal(length(tpca_obj$explained_variance), ncomp_input)
+    # removed explained_variance output pending theory development to ensure
+    # it's legit first
+    # expect_equal(length(tpca_obj$explained_variance), ncomp_input)
     expect_equal(dim(tpca_obj$variates), c(n, ncomp_input))
     expect_equal(dim(tpca_obj$loadings), c(p, ncomp_input))
   }
