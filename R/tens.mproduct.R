@@ -19,10 +19,16 @@
 #' @keywords internal
 #' @noRd
 .apply_mat_transform <- function(x, mat, bpparam) {
+  # first cache names for x, using names if a vector otherwise dimnames for
+  # array type inputs
+  cached_names <- if (is.vector(x)) names(x) else dimnames(x)
+
   if (length(dim(x)) == 1) {
-    return(mat %*% x)
+    out <- mat %*% x
+    names(out) <- cached_names
   } else if (length(dim(x)) == 2) {
-    return(mat %*% x)
+    out <- mat %*% x
+    dimnames(out) <- cached_names
   } else if (length(dim(x)) == 3) {
     n <- dim(x)[1]
     p <- dim(x)[2]
@@ -34,7 +40,7 @@
         function(slice) mat %*% slice # left multiply by transform mat
       )
       # permute back to original orientation
-      return(aperm(array(transformed_slices, dim = c(t, n, p)), c(2, 3, 1)))
+      out <- aperm(array(transformed_slices, dim = c(t, n, p)), c(2, 3, 1))
       # ------------------------------------------------------------------------
     } else {
       # BiocParallel algorithm -------------------------------------------------
@@ -45,17 +51,18 @@
       )
       # unlist and cast into array with p facewise t x n matrices
       # then appropriately rotate to get original n x p x t matrix
-      return(
+      out <-
         aperm(array(unlist(transformed_slices), dim = c(t, n, p)), c(2, 3, 1))
-      )
       # ------------------------------------------------------------------------
     }
+    dimnames(out) <- cached_names
   } else {
     # error: some array >3D has been inputted
     stop(
       "Only order 1 (vector), 2 (matrix), 3 (3D tensor) arrays are supported"
     )
   }
+  return(out)
 }
 
 #' Validate appropriate 'null-ness' of m, minv inputs, and apply default
