@@ -7,9 +7,9 @@
 matrix_to_m_transforms(m_mat, m_inv_mat = NULL, bpparam = NULL)
 }
 \arguments{
-\item{m_mat}{Function which defines the tubal transform.}
+\item{m_mat}{Matrix which defines the tubal transform.}
 
-\item{m_inv_mat}{Function which defines inverse tubal transform}
+\item{m_inv_mat}{Matrix which defines inverse tubal transform}
 
 \item{bpparam}{A \link[BiocParallel]{BiocParallelParam-class} object
 indicating the type of parallelisation.}

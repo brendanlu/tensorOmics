@@ -77,7 +77,7 @@
 #' default to the maximum ncomp value possible.
 #' @param m A function which applies an orthogonal tensor tubal transform.
 #' @param minv The inverse of m.
-#' @param center If set to false, the data tensor will not be centralized into
+#' @param center If set to false, the data tensor will not be centered into
 #' Mean Deviation Form (see Mor et al. 2022). By default, the mean horizontal
 #' slice of the input tensor(s) are subtracted, so that all of the horizontal
 #' slices sum to 0, analgous to centering matrix data.

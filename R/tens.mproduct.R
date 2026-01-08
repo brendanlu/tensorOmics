@@ -95,8 +95,8 @@
 #' Returns functions \code{m} and \code{m_inv} which apply tubal transforms
 #' defined by the matrix \code{m_mat}.
 #'
-#' @param m_mat Function which defines the tubal transform.
-#' @param m_inv_mat Function which defines inverse tubal transform
+#' @param m_mat Matrix which defines the tubal transform.
+#' @param m_inv_mat Matrix which defines inverse tubal transform
 #' @param bpparam A \link[BiocParallel]{BiocParallelParam-class} object
 #' indicating the type of parallelisation.
 #' @return
