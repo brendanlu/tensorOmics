@@ -87,7 +87,7 @@ tsvdm <- function(
     return(list(uhat = u, shat = s, vhat = v))
   } else {
     if (transform) {
-      # minv will work on s regardless of what form it is in
+      # minv will work on s regardless of what form s is in
       output <- lapply(list(u, s, v), minv)
       names(output) <- c("u", "s", "v")
       return(output)
