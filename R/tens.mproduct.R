@@ -190,7 +190,7 @@ dctii_m_transforms <- function(t, bpparam = NULL) {
   if (is.null(names1)) return(names2)
   if (is.null(names2)) return(names1)
 
-  # both non-NULL case, somewhat confoluted logic below covered in unit tests
+  # both non-NULL case, somewhat convoluted logic below covered in unit tests
   # search: "facewise product resolves names correctly, and propogates them"
   out <- names1
   conflicts <- !is.na(names1) & !is.na(names2) & (names1 != names2)
