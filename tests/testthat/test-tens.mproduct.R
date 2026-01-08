@@ -60,14 +60,47 @@ test_that(
 )
 
 test_that(
+  "facewise product resolves names correctly, and propogates them",
+  code = {
+    n <- 3
+    p <- 4
+    t <- 5
+    set.seed(1)
+    test_tensor1 <- array(rnorm(n * p * t), dim = c(n, p, t))
+    test_tensor2 <- ft(test_tensor1)
+    expected_result <- array(0, dim = c(n, n, t))
+
+    dimnames(test_tensor1) <- list(
+      paste0("r1", seq_len(n)),
+      paste0("c1", seq_len(p)),
+      c("a", NA, "c", "d", NA)
+    )
+    dimnames(test_tensor2) <- list(
+      paste0("r2", seq_len(p)),
+      paste0("c2", seq_len(n)),
+      c("a", "b", "x", NA, NA)
+    )
+
+    expect_equal(
+      dimnames(test_tensor1 %fp% test_tensor2),
+      list(
+        paste0("r1", seq_len(n)),
+        paste0("c2", seq_len(n)),
+        c("a", "b", NA, "d", NA)
+      )
+    )
+  }
+)
+
+test_that(
   "mode-3 product result matches naive nested for-loop algorithm",
   code = {
     n <- 2
     p <- 4
     t <- 3
-    test_tensor1 <- array(1:(n * p * t), dim = c(2, 4, 3))
+    test_tensor1 <- array(1:(n * p * t), dim = c(n, p, t))
     m_mat <- gsignal::dctmtx(t)
-    expected_result <- array(0, dim = c(2, 4, 3))
+    expected_result <- array(0, dim = c(n, p, t))
     for (nn in 1:n) {
       for (pp in 1:p) {
         expected_result[nn, pp, ] <- m_mat %*% test_tensor1[nn, pp, ]
@@ -76,6 +109,29 @@ test_that(
     transforms <- dctii_m_transforms(t)
     m <- transforms$m
     expect_equal(m(test_tensor1), expected_result)
+  }
+)
+
+test_that(
+  ".apply_mat_transform based mode-3 product propogates names",
+  code = {
+    n <- 2
+    p <- 4
+    t <- 3
+    test_tensor1 <- array(1:(n * p * t), dim = c(n, p, t))
+    m_mat <- gsignal::dctmtx(t)
+    transforms <- dctii_m_transforms(t)
+    m <- transforms$m
+    dimnames(test_tensor1) <- list(
+      paste0("r", seq_len(n)),
+      paste0("c", seq_len(p)),
+      paste0("t", seq_len(t))
+    )
+    result <- m(test_tensor1)
+    expect_equal(
+      dimnames(result),
+      dimnames(test_tensor1)
+    )
   }
 )
 

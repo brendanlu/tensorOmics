@@ -21,6 +21,7 @@
 .apply_mat_transform <- function(x, mat, bpparam) {
   # first cache names for x, using names if a vector otherwise dimnames for
   # array type inputs
+  # search: ".apply_mat_transform based mode-3 product propogates names"
   cached_names <- if (is.vector(x)) names(x) else dimnames(x)
 
   if (length(dim(x)) == 1) {
@@ -165,6 +166,34 @@ dctii_m_transforms <- function(t, bpparam = NULL) {
   return(matrix_to_m_transforms(m_mat = m_mat, bpparam = bpparam))
 }
 
+#' For two name vectors, return a named vector which "summarises" them by:
+#' - if both name vectors are NULL, return NULL
+#' - if one name vector is NULL, return the other
+#' - if both name vectors are not fully NULL, return a named vector which has
+#' non-NULL elements only if the names are identical in both inputs, OR one of
+#' the inputs has NULL at that position (where the other has a non-NULL value
+#' at that position which we can use)
+#'
+#' @author Brendan Lu
+#' @keywords internal
+#' @noRd
+.resolve_names <- function(names1, names2) {
+  stopifnot(length(names1) == length(names2))
+
+  # both NULL case handled appropriately from below
+  if (is.null(names1)) return(names2)
+  if (is.null(names2)) return(names1)
+
+  # both non-NULL case, logic tested in unit tests
+  # search: "facewise product resolves names correctly, and propogates them"
+  out <- rep(NA, length(names1))
+  match_mask <- names1 == names2 & !is.na(names1) & !is.na(names2)
+  out[match_mask] <- names1[match_mask]
+  out[is.na(names1)] <- names2[is.na(names1)]
+  out[is.na(names2)] <- names1[is.na(names2)]
+  return(out)
+}
+
 #' Compute Kilmer's facewise product. Note that the for-loop implementation is
 #' relatively fast, and very readable. There's also a BiocParralel
 #' implementation here, but it lacks significant benchmarking results.
@@ -174,6 +203,9 @@ dctii_m_transforms <- function(t, bpparam = NULL) {
 #' @keywords internal
 #' @noRd
 .binary_facewise <- function(a, b, bpparam) {
+  # require 3d array inputs
+  stopifnot(length(dim(a)) == 3 && length(dim(b)) == 3)
+
   na <- dim(a)[1]
   pa <- dim(a)[2]
   ta <- dim(a)[3]
@@ -188,28 +220,39 @@ dctii_m_transforms <- function(t, bpparam = NULL) {
   # error: non-conforming facewise dimensions
   stopifnot(pa == nb)
 
+  if (!is.null(dimnames(a)) || !is.null(dimnames(b))) {
+    # attempt to cache some sensible names
+    out_dimnames <- list(
+      dimnames(a)[[1]],
+      dimnames(b)[[2]],
+      .resolve_names(dimnames(a)[[3]], dimnames(b)[[3]])
+    )
+  } else {
+    # otherwise no point having a list of NULL's
+    out_dimnames <- NULL
+  }
+
   if (is.null(bpparam)) {
     # for-loop algorithm -------------------------------------------------------
-    fp_ab <- array(0, dim = c(na, pb, t))
+    out <- array(0, dim = c(na, pb, t))
     for (i in seq_len(t)) {
-      fp_ab[, , i] <- a[, , i] %*% b[, , i]
+      out[, , i] <- a[, , i] %*% b[, , i]
     }
-    return(fp_ab)
     # --------------------------------------------------------------------------
   } else {
     # BiocParallel algorithm ---------------------------------------------------
     # bltodo: benchmark / investigate preallocation here?
-    return(
-      simplify2array(
-        BiocParallel::bplapply(
-          array(seq_len(t)),
-          FUN = function(i) a[, , i] %*% b[, , i],
-          BPPARAM = bpparam
-        )
+    out <- simplify2array(
+      BiocParallel::bplapply(
+        array(seq_len(t)),
+        FUN = function(i) a[, , i] %*% b[, , i],
+        BPPARAM = bpparam
       )
     )
     # --------------------------------------------------------------------------
   }
+  dimnames(out) <- out_dimnames
+  return(out)
 }
 
 #' Tensor facewise product
