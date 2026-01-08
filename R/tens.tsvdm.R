@@ -82,18 +82,20 @@ tsvdm <- function(
     }
   }
 
+  # apply inverse transform if needed
   if (transform && keep_hats) {
-    # make clear returning in hat space
-    return(list(uhat = u, shat = s, vhat = v))
-  } else {
-    if (transform) {
-      # minv will work on s regardless of what form s is in
-      output <- lapply(list(u, s, v), minv)
-      names(output) <- c("u", "s", "v")
-      return(output)
-    } else {
-      output <- list(u = u, s = s, v = v)
-      return(output)
-    }
+    # make clear returning in hat space in list names below
+    output <- list(uhat = u, shat = s, vhat = v)
+  } else if (transform && !keep_hats) {
+    # minv will work on s regardless of what form s is in
+    output <- lapply(list(u, s, v), minv)
+    names(output) <- c("u", "s", "v")
+  } else { # !transform, we never applied m, so we will not apply minv
+    # just make list names u, s, v below, as we don't know if the input is in a
+    # transform space or not
+    #
+    # if you change the naming below, you will probably break tpls tests
+    output <- list(u = u, s = s, v = v)
   }
+  return(output)
 }
