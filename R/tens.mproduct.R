@@ -22,13 +22,19 @@
   # first cache names for x, using names if a vector otherwise dimnames for
   # array type inputs
   # search: ".apply_mat_transform based mode-3 product propogates names"
-  cached_names <- if (is.vector(x)) names(x) else dimnames(x)
+  if (is.vector(x)) {
+    x <- array(x, dim = length(x), dimnames = list(names(x)))
+  }
+  cached_names <- dimnames(x)
 
-  if (length(dim(x)) == 1) {
+  # sense what x is and multiply mat acoss the appropraite dimension
+  if (length(dim(x)) == 1 || is.vector(x)) {
     out <- mat %*% x
-    names(out) <- cached_names
+    # out will no longer be a vector after matrix multiplication, so we can
+    # call dimnames() to name it
+    dimnames(out) <- cached_names
   } else if (length(dim(x)) == 2) {
-    out <- mat %*% x
+    out <- t(mat %*% t(x))
     dimnames(out) <- cached_names
   } else if (length(dim(x)) == 3) {
     n <- dim(x)[1]
@@ -184,13 +190,20 @@ dctii_m_transforms <- function(t, bpparam = NULL) {
   if (is.null(names1)) return(names2)
   if (is.null(names2)) return(names1)
 
-  # both non-NULL case, logic tested in unit tests
+  # both non-NULL case, somewhat confoluted logic below covered in unit tests
   # search: "facewise product resolves names correctly, and propogates them"
-  out <- rep(NA, length(names1))
-  match_mask <- names1 == names2 & !is.na(names1) & !is.na(names2)
-  out[match_mask] <- names1[match_mask]
+  out <- names1
+  conflicts <- !is.na(names1) & !is.na(names2) & (names1 != names2)
+  if (any(conflicts)) {
+    idx <- which(conflicts)
+    vals <- paste0(names1[idx], "/", names2[idx])
+    warning(
+      "Conflicting names at positions ", paste(idx, collapse = ", "),
+      ": ", paste(vals, collapse = "; ")
+    )
+  }
+  out[conflicts] <- NA
   out[is.na(names1)] <- names2[is.na(names1)]
-  out[is.na(names2)] <- names1[is.na(names2)]
   return(out)
 }
 

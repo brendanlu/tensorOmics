@@ -32,10 +32,13 @@ dctii_scipy_equivalent <- function(vec, ortho = TRUE) {
 test_that(
   "gsignal's dct2 is producing the same result as the Scipy algorithm",
   code = {
-    test_vector <- array(c(19, 3, 6, 11))
-    transforms <- dctii_m_transforms(length(test_vector))
+    test_1d_array <- array(c(19, 3, 6, 11))
+    transforms <- dctii_m_transforms(length(test_1d_array))
     m <- transforms$m
-    expect_equal(m(test_vector), matrix(dctii_scipy_equivalent(test_vector)))
+    expect_equal(
+      m(test_1d_array),
+      matrix(dctii_scipy_equivalent(test_1d_array))
+    )
   }
 )
 
@@ -81,8 +84,12 @@ test_that(
       c("a", "b", "x", NA, NA)
     )
 
+    fp_result <- expect_warning(
+      test_tensor1 %fp% test_tensor2,
+      "Conflicting names at positions 3: c/x"
+    )
     expect_equal(
-      dimnames(test_tensor1 %fp% test_tensor2),
+      dimnames(fp_result),
       list(
         paste0("r1", seq_len(n)),
         paste0("c2", seq_len(n)),
@@ -93,7 +100,7 @@ test_that(
 )
 
 test_that(
-  "mode-3 product result matches naive nested for-loop algorithm",
+  "mode-3 product result matches naive nested for-loop algorithm for tensors",
   code = {
     n <- 2
     p <- 4
@@ -113,25 +120,74 @@ test_that(
 )
 
 test_that(
+  "mode-3 product result matches naive nested for-loop algorithm for matrices",
+  code = {
+    n <- 5
+    p <- 4
+    test_matrix1 <- array(1:(n * p), dim = c(n, p))
+    m_mat <- gsignal::dctmtx(p)
+    expected_result <- array(0, dim = c(n, p))
+    for (i in 1:n) {
+      expected_result[i, ] <- m_mat %*% test_matrix1[i, ]
+    }
+    transforms <- dctii_m_transforms(p)
+    m <- transforms$m
+    expect_equal(m(test_matrix1), expected_result)
+  }
+)
+
+test_that(
   ".apply_mat_transform based mode-3 product propogates names",
   code = {
-    n <- 2
+    n <- 3
     p <- 4
-    t <- 3
-    test_tensor1 <- array(1:(n * p * t), dim = c(n, p, t))
-    m_mat <- gsignal::dctmtx(t)
+    t <- 5
     transforms <- dctii_m_transforms(t)
     m <- transforms$m
-    dimnames(test_tensor1) <- list(
+
+    # test: dimnames() propogate for 3D array
+    test_tensor <- array(1:(n * p * t), dim = c(n, p, t))
+    dimnames(test_tensor) <- list(
       paste0("r", seq_len(n)),
       paste0("c", seq_len(p)),
       paste0("t", seq_len(t))
     )
-    result <- m(test_tensor1)
-    expect_equal(
-      dimnames(result),
-      dimnames(test_tensor1)
+    result_tensor <- m(test_tensor)
+    expect_equal(dimnames(result_tensor), dimnames(test_tensor))
+
+    # test: dimnames() propogate for 2D array
+    test_matrix1 <- array(1:(n * t), dim = c(n, t))
+    dimnames(test_matrix1) <- list(
+      paste0("r", seq_len(n)),
+      paste0("t", seq_len(t))
     )
+    result_matrix1 <- m(test_matrix1)
+    expect_equal(dimnames(result_matrix1), dimnames(test_matrix1))
+
+    # test: dimnames() propogate for matrix
+    test_matrix2 <- matrix(1:(n * t), nrow = n, ncol = t)
+    dimnames(test_matrix2) <- list(
+      paste0("r", seq_len(n)),
+      paste0("t", seq_len(t))
+    )
+    result_matrix2 <- m(test_matrix2)
+    expect_equal(dimnames(result_matrix2), dimnames(test_matrix2))
+
+    # test: dimnames() propogate for 1D array
+    # DO NOT use names() on a 1D array, this is for vectors ONLY
+    test_1d_array <- array(
+      1:t,
+      dim = c(t),
+      dimnames = list(paste0("i", seq_len(t)))
+    )
+    result_1d_array <- m(test_1d_array)
+    expect_equal(dimnames(result_1d_array)[[1]], dimnames(test_1d_array)[[1]])
+
+    # test: names() propogate for vector
+    test_vector <- c(1:t)
+    names(test_vector) <- paste0("i", seq_along(test_vector))
+    result_vector <- m(test_vector)
+    expect_equal(dimnames(result_vector)[[1]], names(test_vector))
   }
 )
 
