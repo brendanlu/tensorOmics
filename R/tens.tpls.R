@@ -116,11 +116,11 @@
 #' Mean Deviation Form (see Mor et al. 2022). By default, the mean horizontal
 #' slice of the input tensor(s) are subtracted, so that all of the horizontal
 #' slices sum to 0, analgous to centering matrix data.
-#' @param matrix_output Note: ONLY AFFECTS THE OUTPUT IN "tsvdm" MODE.
-#' Collects the top singular vectors across the tensor, organized by the
-#' magnitude of the corresponding singular vector, and place them into the
-#' columns of a matrix. Corresponds to the 'matrix compression' type of scheme
-#' described in Mor et al. 2022.
+#' @param matrix_output Note: FALSE ONLY AFFECTS THE OUTPUT IN "tsvdm" MODE.
+#' TRUE by default. Collects the top singular vectors across the tensor,
+#' organized by the magnitude of the corresponding singular vector, and place
+#' them into the columns of a matrix. Corresponds to the 'matrix compression'
+#' type of scheme described in Mor et al. 2022.
 #' @param bpparam A \link[BiocParallel]{BiocParallelParam-class} object
 #' indicating the type of parallelisation. Does not have any effect if transform
 #' functions explicitly set using \code{m}, \code{minv}.
@@ -241,21 +241,6 @@ tpls <- function(
       y_projected <- .extract_tensor_columns(y_projected, k_t_flatten_sort)
     }
 
-    # prepare output
-    output <- list(
-      ncomp = ncomp,
-      x = x,
-      y = y,
-      x_loadings = x_loadings,
-      y_loadings = y_loadings,
-      x_projected = x_projected,
-      y_projected = y_projected,
-      features = features,
-      faces = faces
-    )
-    class(output) <- "tpls"
-    return(invisible(output))
-
   } else if (mode == "canonical" || mode == "regression") {
     # there is lots of literature on this, e.g. Kim-Anh's mixOmics book, or
     # Wegelin: "A Survey of Partial Least Squares Methods with Emphasis on the
@@ -347,23 +332,36 @@ tpls <- function(
       y_projected[, i] <- curr_y_projected
     }
 
-    # prepare output
-    output <- list(
-      ncomp = ncomp,
-      x = x,
-      y = y,
-      mode = mode,
-      x_loadings = x_loadings,
-      y_loadings = y_loadings,
-      x_projected = x_projected,
-      y_projected = y_projected,
-      features = features,
-      faces = faces
-    )
-    class(output) <- "tpls"
-    return(invisible(output))
-
   } else {
     stop("Unexpected error in tpls, check 'mode' parameter input")
   }
+
+  if (!matrix_output && mode == "tsvdm") {
+    # only way for output to be in tensor form
+    dimnames(x_loadings) <- .dimnames_for_loadings_tens(x)
+    dimnames(x_projected) <- .dimnames_for_projections_tens(x)
+    dimnames(y_loadings) <- .dimnames_for_loadings_tens(y)
+    dimnames(y_projected) <- .dimnames_for_projections_tens(y)
+  } else {
+    dimnames(x_loadings) <- .dimnames_for_loadings_mat(x)
+    dimnames(x_projected) <- .dimnames_for_projections_mat(x)
+    dimnames(y_loadings) <- .dimnames_for_loadings_mat(y)
+    dimnames(y_projected) <- .dimnames_for_projections_mat(y)
+  }
+
+  # prepare output
+  output <- list(
+    ncomp = ncomp,
+    x = x,
+    y = y,
+    mode = mode,
+    x_loadings = x_loadings,
+    y_loadings = y_loadings,
+    x_projected = x_projected,
+    y_projected = y_projected,
+    features = features,
+    faces = faces
+  )
+  class(output) <- "tpls"
+  return(invisible(output))
 }

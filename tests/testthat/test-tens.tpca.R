@@ -66,13 +66,12 @@ test_that(
 )
 
 test_that(
-  "tpca propogates names appropriately",
+  "tpca propagates names appropriately",
   code = {
     n <- 3
     p <- 4
     t <- 5
 
-    # test: dimnames() propogate for 3D array
     test_tensor <- array(1:(n * p * t), dim = c(n, p, t))
     dimnames(test_tensor) <- list(
       paste0("r", seq_len(n)),

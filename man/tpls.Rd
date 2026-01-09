@@ -37,11 +37,11 @@ Mean Deviation Form (see Mor et al. 2022). By default, the mean horizontal
 slice of the input tensor(s) are subtracted, so that all of the horizontal
 slices sum to 0, analgous to centering matrix data.}
 
-\item{matrix_output}{Note: ONLY AFFECTS THE OUTPUT IN "tsvdm" MODE.
-Collects the top singular vectors across the tensor, organized by the
-magnitude of the corresponding singular vector, and place them into the
-columns of a matrix. Corresponds to the 'matrix compression' type of scheme
-described in Mor et al. 2022.}
+\item{matrix_output}{Note: FALSE ONLY AFFECTS THE OUTPUT IN "tsvdm" MODE.
+TRUE by default. Collects the top singular vectors across the tensor,
+organized by the magnitude of the corresponding singular vector, and place
+them into the columns of a matrix. Corresponds to the 'matrix compression'
+type of scheme described in Mor et al. 2022.}
 
 \item{bpparam}{A \link[BiocParallel]{BiocParallelParam-class} object
 indicating the type of parallelisation. Does not have any effect if transform

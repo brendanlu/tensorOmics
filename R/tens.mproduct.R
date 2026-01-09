@@ -184,14 +184,13 @@ dctii_m_transforms <- function(t, bpparam = NULL) {
 #' @keywords internal
 #' @noRd
 .resolve_names <- function(names1, names2) {
-  stopifnot(length(names1) == length(names2))
-
   # both NULL case handled appropriately from below
   if (is.null(names1)) return(names2)
   if (is.null(names2)) return(names1)
 
   # both non-NULL case, somewhat convoluted logic below covered in unit tests
   # search: "facewise product resolves names correctly, and propogates them"
+  stopifnot(length(names1) == length(names2))
   out <- names1
   conflicts <- !is.na(names1) & !is.na(names2) & (names1 != names2)
   if (any(conflicts)) {

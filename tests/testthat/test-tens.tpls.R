@@ -194,12 +194,12 @@ test_that(
 test_that(
   "sense checks on the tpls returned features and faces items",
   code = {
-    n <- 10
-    p <- 30
-    q <- 20
+    n <- 5
+    p <- 8
+    q <- 13
     t <- 4
     ncomp_input <- 3
-    modes_to_test <- c("regression", "tsvdm")
+    modes_to_test <- c("regression", "tsvdm", "regression")
 
     k <- min(n, p, q)
 
@@ -242,6 +242,72 @@ test_that(
     expect_error(
       tpls(test_tensor, test_tensor, mode = unsupported_mode),
       "Please ensure mode is one of: canonical, regression, tsvdm"
+    )
+  }
+)
+
+test_that(
+  "tpls propagates names appropriately",
+  code = {
+    n <- 3
+    p <- 8
+    q <- 13
+    t <- 4
+    k <- min(n, p, q)
+
+    set.seed(1)
+    test_x <- array(rnorm(n * p * t, mean = 0, sd = 5), dim = c(n, p, t))
+    test_y <- array(rnorm(n * q * t, mean = 0, sd = 3), dim = c(n, q, t))
+
+    dimnames(test_x) <- list(
+      paste0("r", seq_len(n)),
+      paste0("c_x", seq_len(p)),
+      paste0("t", seq_len(t))
+    )
+    dimnames(test_y) <- list(
+      paste0("r", seq_len(n)),
+      paste0("c_y", seq_len(q)),
+      paste0("t", seq_len(t))
+    )
+
+    tpls_mat <- tpls(test_x, test_y, matrix_output = TRUE)
+    tpls_tens <- tpls(test_x, test_y, mode = "tsvdm", matrix_output = FALSE)
+
+    # rows of loadings output named after the features of the original data
+    expect_equal(
+      dimnames(tpls_mat$x_loadings),
+      list(paste0("c_x", seq_len(p)), NULL)
+    )
+    expect_equal(
+      dimnames(tpls_tens$x_loadings),
+      list(paste0("c_x", seq_len(p)), NULL, paste0("t", seq_len(t)))
+    )
+    expect_equal(
+      dimnames(tpls_mat$y_loadings),
+      list(paste0("c_y", seq_len(q)), NULL)
+    )
+    expect_equal(
+      dimnames(tpls_tens$y_loadings),
+      list(paste0("c_y", seq_len(q)), NULL, paste0("t", seq_len(t)))
+    )
+
+    # rows of the variates (projections) output named after the samples of the
+    # original data
+    expect_equal(
+      dimnames(tpls_mat$x_projected),
+      list(paste0("r", seq_len(n)), NULL)
+    )
+    expect_equal(
+      dimnames(tpls_tens$x_projected),
+      list(paste0("r", seq_len(n)), NULL, paste0("t", seq_len(t)))
+    )
+    expect_equal(
+      dimnames(tpls_mat$y_projected),
+      list(paste0("r", seq_len(n)), NULL)
+    )
+    expect_equal(
+      dimnames(tpls_tens$y_projected),
+      list(paste0("r", seq_len(n)), NULL, paste0("t", seq_len(t)))
     )
   }
 )
