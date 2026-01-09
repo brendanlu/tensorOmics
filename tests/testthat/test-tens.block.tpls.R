@@ -209,3 +209,45 @@ test_that(
     )
   }
 )
+
+test_that(
+  "block_tpls propagates names appropriately",
+  code = {
+    n <- 7
+    ps <- c(10, 5, 2)
+    t <- 4
+    ncomp_input <- 3
+
+    set.seed(1)
+    # generate 'blocks' of tensor data and output variable y
+    test_a <- lapply(
+      ps,
+      function(p) array(
+        rnorm(n * p * t, mean = 0, sd = p),
+        dim = c(n, p, t),
+        dimnames = list(
+          paste0("r", seq_len(n)),
+          paste0(p, "_c", seq_len(p)),
+          paste0("t", seq_len(t))
+        )
+      )
+    )
+
+    block_tpls_obj <- block_tpls(
+      test_a,
+      1, # doesn't really matter what the "y" block is for this test
+      ncomp = ncomp_input
+    )
+
+    for (i in seq_along(test_a)) {
+      expect_equal(
+        dimnames(block_tpls_obj$loadings[[i]]),
+        list(paste0(ps[i], "_c", seq_len(ps[i])), NULL)
+      )
+      expect_equal(
+        dimnames(block_tpls_obj$projected[[i]]),
+        list(paste0("r", seq_len(n)), NULL)
+      )
+    }
+  }
+)

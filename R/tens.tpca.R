@@ -178,7 +178,7 @@ tpca <- function(
 
   loadings <- tsvdm_decomposition$vhat
 
-  # extract the columns in compressed form and attempt to propogate names
+  # extract the columns in compressed form and set dimnames
   if (matrix_output) {
     x_projected <- .extract_tensor_columns(x_projected, k_t_flatten_sort)
     loadings <- .extract_tensor_columns(

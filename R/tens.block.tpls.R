@@ -821,6 +821,12 @@ block_tpls <- function(
   # BLTODO: need to decide if it is worth splitting X and Y blocks in the output
   # what will be more convenient for user...?
 
+  # set dimnames
+  for (i in seq_along(a)) {
+    dimnames(tensor_blocks_loadings[[i]]) <- .dimnames_for_loadings_mat(a[[i]])
+    dimnames(tensor_blocks_projected[[i]]) <- .dimnames_for_projections_mat(a[[i]])
+  }
+
   # prepare output
   output <- list(
     ncomp = ncomp,

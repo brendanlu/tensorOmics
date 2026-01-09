@@ -336,6 +336,7 @@ tpls <- function(
     stop("Unexpected error in tpls, check 'mode' parameter input")
   }
 
+  # set dimnames
   if (!matrix_output && mode == "tsvdm") {
     # only way for output to be in tensor form
     dimnames(x_loadings) <- .dimnames_for_loadings_tens(x)
