@@ -178,13 +178,32 @@ tpca <- function(
 
   loadings <- tsvdm_decomposition$vhat
 
-  # extract the columns in compressed form
+  # extract the columns in compressed form and propogate names
   if (matrix_output) {
     x_projected <- .extract_tensor_columns(x_projected, k_t_flatten_sort)
     loadings <- .extract_tensor_columns(
       tsvdm_decomposition$vhat,
       k_t_flatten_sort
     )
+
+    if (!is.null(dimnames(x))) {
+      # columns are the new components
+      rownames(loadings) <- dimnames(x)[[2]]
+      rownames(x_projected) <- dimnames(x)[[1]]
+    }
+  } else { # propogate names for tensors
+    if (!is.null(dimnames(x))) {
+      dimnames(loadings) <- list(
+        dimnames(x)[[2]],
+        NULL, # columns are the new components
+        dimnames(x)[[3]]
+      )
+      dimnames(x_projected) <- list(
+        dimnames(x)[[1]],
+        NULL, # columns are the new components
+        dimnames(x)[[3]]
+      )
+    }
   }
 
   # BLTODO: (to add in) zero out and compute rho as well

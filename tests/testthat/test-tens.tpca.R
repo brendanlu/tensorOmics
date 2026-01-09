@@ -57,5 +57,65 @@ test_that(
       .make_signs_consistent(mixomics_pca$loadings$X),
       .make_signs_consistent(tensor_pca$loadings)
     )
+
+    expect_equal(
+      .make_signs_consistent(mixomics_pca$variates$X),
+      .make_signs_consistent(tensor_pca$variates)
+    )
+  }
+)
+
+test_that(
+  "tpca propogates names appropriately",
+  code = {
+    n <- 3
+    p <- 4
+    t <- 5
+
+    # test: dimnames() propogate for 3D array
+    test_tensor <- array(1:(n * p * t), dim = c(n, p, t))
+    dimnames(test_tensor) <- list(
+      paste0("r", seq_len(n)),
+      paste0("c", seq_len(p)),
+      paste0("t", seq_len(t))
+    )
+
+    tpca_mat <- tpca(test_tensor, matrix_output = TRUE)
+    tpca_tens <- tpca(test_tensor, matrix_output = FALSE)
+
+    # rows of loadings output named after the features of the original data
+    expect_equal(
+      dimnames(tpca_mat$loadings),
+      list(
+        paste0("c", seq_len(p)),
+        NULL
+      )
+    )
+    expect_equal(
+      dimnames(tpca_tens$loadings),
+      list(
+        paste0("c", seq_len(p)),
+        NULL,
+        paste0("t", seq_len(t))
+      )
+    )
+
+    # rows of the variates (projections) output named after the samples of the
+    # original data
+    expect_equal(
+      dimnames(tpca_mat$variates),
+      list(
+        paste0("r", seq_len(n)),
+        NULL
+      )
+    )
+    expect_equal(
+      dimnames(tpca_tens$variates),
+      list(
+        paste0("r", seq_len(n)),
+        NULL,
+        paste0("t", seq_len(t))
+      )
+    )
   }
 )
