@@ -115,3 +115,37 @@ test_that(
     expect_equal(dim(tplsda_mat$y), c(n, n * t, t))
   }
 )
+
+test_that(
+  "tplsda propagates names appropriately",
+  code = {
+    n <- 3
+    p <- 8
+    t <- 4
+
+    set.seed(1)
+    test_x <- array(rnorm(n * p * t, mean = 0, sd = 5), dim = c(n, p, t))
+    test_y_vec <- letters[1:n]
+
+    dimnames(test_x) <- list(
+      paste0("r", seq_len(n)),
+      paste0("c_x", seq_len(p)),
+      paste0("t", seq_len(t))
+    )
+
+    tplsda = tplsda(test_x, test_y_vec)
+
+    # rows of loadings output named after the features of the original data
+    expect_equal(
+      dimnames(tplsda$x_loadings),
+      list(paste0("c_x", seq_len(p)), NULL)
+    )
+
+    # rows of the variates (projections) output named after the samples of the
+    # original data
+    expect_equal(
+      dimnames(tplsda$x_projected),
+      list(paste0("r", seq_len(n)), NULL)
+    )
+  }
+)
