@@ -2,7 +2,7 @@
 [![License: AGPL-3](https://img.shields.io/badge/license-AGPL--3-blue.svg)](https://opensource.org/licenses/AGPL-3.0)
 [![Project Status: Active](https://img.shields.io/badge/project%20status-active-brightgreen.svg)](https://example.com)
 
-This repository contains the `tensorOmics` R package for the analysis of temporal multi-omics data using (ordder 3) tensor generalizations of matrix methods.
+This repository contains the `tensorOmics` R package for the analysis of temporal multi-omics data using (order 3) tensor generalizations of matrix methods.
 
 ## Installation
 
