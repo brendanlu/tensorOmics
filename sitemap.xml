@@ -1,0 +1,22 @@
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/LICENSE.html</loc></url>
+<url><loc>/articles/index.html</loc></url>
+<url><loc>/articles/vignette-placeholder.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/reference/block_tpls.html</loc></url>
+<url><loc>/reference/block_tplsda.html</loc></url>
+<url><loc>/reference/dctii_m_transforms.html</loc></url>
+<url><loc>/reference/facewise_crossproduct.html</loc></url>
+<url><loc>/reference/facewise_product.html</loc></url>
+<url><loc>/reference/facewise_transpose.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/m_product.html</loc></url>
+<url><loc>/reference/matrix_to_m_transforms.html</loc></url>
+<url><loc>/reference/tpca.html</loc></url>
+<url><loc>/reference/tpls.html</loc></url>
+<url><loc>/reference/tplsda.html</loc></url>
+<url><loc>/reference/tsvdm.html</loc></url>
+</urlset>
+
