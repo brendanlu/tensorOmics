@@ -67,7 +67,31 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-This package provides methods for the analysis of temporal multi-omics data by implementing tensor generalizations of matrix methods.
+<div class="section level1">
+<div class="page-header"><h1 id="tensoromics">tensorOmics<a class="anchor" aria-label="anchor" href="#tensoromics"></a>
+</h1></div>
+<p><a href="https://opensource.org/licenses/AGPL-3.0" class="external-link"><img src="https://img.shields.io/badge/license-AGPL--3-blue.svg" alt="License: AGPL-3"></a> <a href="https://example.com" class="external-link"><img src="https://img.shields.io/badge/project%20status-active-brightgreen.svg" alt="Project Status: Active"></a></p>
+<p>This repository contains the <code>tensorOmics</code> R package for the analysis of temporal multi-omics data using (ordder 3) tensor generalizations of matrix methods.</p>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
+<p>Install the GitHub version with:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"https://github.com/brendanlu/tensorOmics"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="package-website">Package Website<a class="anchor" aria-label="anchor" href="#package-website"></a>
+</h2>
+<p>You can view the package website <a href="https://brendanlu.github.io/tensorOmics/" class="external-link">here</a></p>
+</div>
+<div class="section level2">
+<h2 id="abstract">Abstract<a class="anchor" aria-label="anchor" href="#abstract"></a>
+</h2>
+<p>Multi-omics studies capture comprehensive molecular profiles across biological layers to understand complex biological processes. A central challenge is integrating information across heterogeneous data types to identify coordinated molecular responses, particularly when measurements are collected longitudinally. Traditional integration methods can be broadly classified as unsupervised (exploring patterns without phenotypic information) or supervised (discriminating between groups or predicting outcomes). These approaches rely predominantly on matrix-based techniques that concatenate or project data into lower-dimensional spaces. However, matrix methods struggle with longitudinal data, as flattening multi-dimensional structures obscures temporal trajectories and violates independence assumptions. Tensor-based methods preserve the natural multi-way structure of longitudinal data but existing approaches are predominantly unsupervised, cannot incorporate phenotypic responses for discriminant analysis, and lack frameworks for integrating multiple omics layers.</p>
+<p>We present tensorOmics, a comprehensive framework for longitudinal omics analysis using tensor factorisation. The framework encompasses supervised and unsupervised methods for both single-omic (tensor PCA, tensor PLS discriminant analysis) and multi-omic settings (tensor PLS, block tensor PLS, block tensor PLS discriminant analysis). This unified approach captures coordinated responses across biological layers while preserving temporal structure. We validated tensorOmics through three case studies: antibiotic perturbation experiments, anaerobic digestion systems, and fecal microbiota transplantation. These applications demonstrate tensorOmics differentiates treatment groups, captures time-dependent molecular signatures, and reveals multi-layer coordinated responses that cross-sectional methods miss.</p>
+</div>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
