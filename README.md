@@ -29,4 +29,4 @@ You can view case studies [here](https://github.com/SarithaKodikara/tensorOmics_
 
 ## Link to full manuscript
 
-Pending...
+You can view the preprint [here](https://www.biorxiv.org/content/10.64898/2026.02.10.705179v1)
