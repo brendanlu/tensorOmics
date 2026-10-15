@@ -109,3 +109,34 @@ test_that(
     expect_true(block_tplsda_obj$faces[1] != 1)
   }
 )
+
+test_that(
+  "block_tplsda scales faces by default for a single label per subject",
+  code = {
+    n <- 30
+    p <- 20
+    t <- 4
+
+    set.seed(1)
+    # a difference in shape only (features 1 to 5), plus subject offsets that
+    # are constant over time: they sit on face 1 and make it the largest face
+    test_y <- rep(c("a", "b"), each = n / 2)
+    test_x <- array(rnorm(n * p * t), dim = c(n, p, t))
+    for (j in 1:5) {
+      test_x[, j, ] <- test_x[, j, ] +
+        outer(ifelse(test_y == "a", 0.5, -0.5), c(-1.5, -0.5, 0.5, 1.5))
+    }
+    test_x <- test_x + array(rnorm(n * p, sd = 2), dim = c(n, p, t))
+
+    block_tplsda_unscaled <- block_tplsda(
+      list(test_x), test_y, ncomp = 1, design = "full", face_scaling = "none"
+    )
+    expect_equal(as.vector(block_tplsda_unscaled$faces), 1)
+
+    block_tplsda_obj <- block_tplsda(
+      list(test_x), test_y, ncomp = 1, design = "full"
+    )
+    expect_equal(block_tplsda_obj$face_scaling, "frobenius")
+    expect_equal(as.vector(block_tplsda_obj$faces), 2)
+  }
+)

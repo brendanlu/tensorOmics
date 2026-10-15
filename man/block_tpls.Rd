@@ -20,6 +20,7 @@ block_tpls(
   max_iter = 100,
   solve_dual = TRUE,
   transform_y = NULL,
+  face_scaling = NULL,
   bpparam = NULL
 )
 }
@@ -92,6 +93,13 @@ face after each component. TRUE copies a subject-fixed response over time and
 transforms it; FALSE needs a target block that is the same at every time
 point. See \code{\link{tpls}}.}
 
+\item{face_scaling}{How faces compete when each component picks one.
+"frobenius" divides each face's score by the combined Frobenius norm of the
+other blocks on that face, times that of the target block, so that faces
+compete on a common scale; "none" compares the raw scores. It affects which
+face is chosen only. NULL by default: "frobenius" for an untransformed
+target block, "none" otherwise. See \code{\link{tpls}}.}
+
 \item{bpparam}{A \link[BiocParallel]{BiocParallelParam-class} object
 indicating the type of parallelisation. Does not have any effect if transform
 functions explicitly set using \code{m}, \code{minv}.}
@@ -106,6 +114,7 @@ A list containing:
 \item{scheme}{The RGCCA scheme used ("horst", "factorial", "centroid").}
 \item{mode}{The PLS mode used ("canonical" or "regression").}
 \item{transform_y}{Whether the target block was m-transformed.}
+\item{face_scaling}{How faces were compared: "frobenius" or "none".}
 \item{pairwise_scoring}{The pairwise_scoring method used.}
 \item{loadings}{List of loadings matrices per block (p_i x ncomp).}
 \item{projected}{List of projected variates per block (n x ncomp).}

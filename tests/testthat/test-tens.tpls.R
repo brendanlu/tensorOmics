@@ -458,3 +458,47 @@ test_that(
     )
   }
 )
+
+test_that(
+  "tpls with scaled faces chooses them on a common scale",
+  code = {
+    n <- 20
+    p <- 10
+    t <- 4
+
+    set.seed(1)
+    groups <- rep(c("a", "b"), each = n / 2)
+    test_x <- array(rnorm(n * p * t), dim = c(n, p, t))
+    for (j in 1:5) {
+      test_x[, j, ] <- test_x[, j, ] +
+        outer(ifelse(groups == "a", 1, -1), c(-1.5, -0.5, 0.5, 1.5))
+    }
+    test_x <- test_x + array(rnorm(n * p, sd = 3), dim = c(n, p, t))
+    test_y <- cbind(groups == "a", groups == "b") * 1
+
+    # the same data with face 1 multiplied by 10, after the transform
+    transforms <- dctii_m_transforms(t)
+    xhat <- transforms$m(test_x)
+    xhat[, , 1] <- 10 * xhat[, , 1]
+    test_x_10 <- transforms$minv(xhat)
+
+    # scaled faces choose the same faces; raw scores move to face 1
+    expect_equal(
+      tpls(test_x, test_y, ncomp = 2)$faces,
+      tpls(test_x_10, test_y, ncomp = 2)$faces
+    )
+    expect_false(identical(
+      tpls(test_x, test_y, ncomp = 2, face_scaling = "none")$faces,
+      tpls(test_x_10, test_y, ncomp = 2, face_scaling = "none")$faces
+    ))
+
+    # a response that changes over time keeps raw scores by default
+    test_y_varying <- array(rnorm(n * 2 * t), dim = c(n, 2, t))
+    expect_equal(tpls(test_x, test_y_varying, ncomp = 1)$face_scaling, "none")
+
+    expect_error(
+      tpls(test_x, test_y, face_scaling = "max"),
+      "Please ensure face_scaling is one of: frobenius, none"
+    )
+  }
+)

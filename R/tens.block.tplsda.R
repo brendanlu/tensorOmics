@@ -40,6 +40,9 @@
 #' transformed, so every face of the blocks is compared with the labels
 #' themselves; labels repeated over time are transformed. See
 #' \code{\link{block_tpls}}.
+#' @param face_scaling How faces compete when each component picks one; see
+#' \code{\link{block_tpls}}. NULL by default: "frobenius" for a single label
+#' per subject, "none" for labels repeated over time.
 #'
 #' @inherit block_tpls return
 #' @return Adds \code{y_original}: the original labels input
@@ -63,6 +66,7 @@ block_tplsda <- function(
   max_iter = 100,
   solve_dual = TRUE,
   transform_y = multi_label,
+  face_scaling = NULL,
   bpparam = NULL
 ) {
   # just get a provisional value for t here, proper parameter checking is done
@@ -120,6 +124,7 @@ block_tplsda <- function(
     max_iter = max_iter,
     solve_dual = solve_dual,
     transform_y = transform_y,
+    face_scaling = face_scaling,
     bpparam = bpparam
   )
   output$y_original <- y_original_copy

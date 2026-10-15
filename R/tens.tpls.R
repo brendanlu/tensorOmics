@@ -118,6 +118,42 @@
   }
 }
 
+#' Frobenius norm of each face of a tensor.
+#'
+#' @keywords internal
+#' @noRd
+.face_norms <- function(tens) {
+  return(apply(tens, 3, function(face) sqrt(sum(face^2))))
+}
+
+#' Divide each face's scores (the columns of a matrix) by that face's norm, so
+#' that faces compete on a common scale. A face whose norm is negligible
+#' scores 0 rather than being divided through.
+#'
+#' @keywords internal
+#' @noRd
+.scale_faces <- function(scores, face_norms) {
+  scaled <- sweep(scores, 2, face_norms, "/")
+  scaled[, face_norms <= sqrt(.Machine$double.eps) * max(face_norms)] <- 0
+  return(scaled)
+}
+
+#' Fill in a NULL face_scaling input from the response construction, or check
+#' the given one: faces are scaled by default when the response is not
+#' transformed.
+#'
+#' @keywords internal
+#' @noRd
+.validate_face_scaling <- function(face_scaling, transform_y) {
+  if (is.null(face_scaling)) {
+    return(if (transform_y) "none" else "frobenius")
+  }
+  if (!isTRUE(face_scaling %in% c("frobenius", "none"))) {
+    stop("Please ensure face_scaling is one of: frobenius, none")
+  }
+  return(face_scaling)
+}
+
 #' Check integer ncomp inputs. Used for tensor PLS-like analyses. Depends on a
 #' sensible calculation of max_rank which is left to the calling state.
 #'
@@ -175,6 +211,14 @@
 #' every face after each component. TRUE copies a subject-fixed response over
 #' time and transforms it; FALSE needs a response that is the same at every
 #' time point.
+#' @param face_scaling How faces compete when each component picks one.
+#' "frobenius" divides each face's score, the largest singular value of
+#' t(xhat_f) yhat_f, by the Frobenius norms of xhat_f and yhat_f, so that faces
+#' compete on a common scale. "none" compares the raw scores, which favours the
+#' face with most variance; under the default DCT that is face 1, which also
+#' holds the between-subject variation. It affects which face is chosen only.
+#' NULL by default: "frobenius" for an untransformed response, "none"
+#' otherwise.
 #' @param bpparam A \link[BiocParallel]{BiocParallelParam-class} object
 #' indicating the type of parallelisation. Does not have any effect if transform
 #' functions explicitly set using \code{m}, \code{minv}.
@@ -185,6 +229,7 @@
 #'   \item{y}{The centered input tensor Y.}
 #'   \item{mode}{The PLS mode used: "canonical", "regression", or "tsvdm".}
 #'   \item{transform_y}{Whether the response was m-transformed.}
+#'   \item{face_scaling}{How faces were compared: "frobenius" or "none".}
 #'   \item{x_loadings}{Matrix of X loadings (p x ncomp), or loadings tensor
 #'   if `mode = "tsvdm"` AND `matrix_output = FALSE`.}
 #'   \item{y_loadings}{Matrix of Y loadings (q x ncomp), or loadings tensor
@@ -210,6 +255,7 @@ tpls <- function(
   center = TRUE,
   matrix_output = TRUE, # FALSE only takes effect for tsvdm method
   transform_y = NULL,
+  face_scaling = NULL,
   bpparam = NULL
 ) {
   # BLTODO: add option to minv back into original space...? currently it does
@@ -231,6 +277,7 @@ tpls <- function(
   if (is.null(transform_y)) {
     transform_y <- !subject_level_y
   }
+  face_scaling <- .validate_face_scaling(face_scaling, transform_y)
   if (subject_level_y && length(dim(x)) == 3) {
     y <- .subject_level_to_tensor(y, dim(x)[3])
   }
@@ -313,6 +360,10 @@ tpls <- function(
         }
         ncomp <- sum(!noise)
       }
+      # with faces scaled, the rest are ordered by their scaled scores
+      if (face_scaling == "frobenius") {
+        svals <- .scale_faces(svals, .face_norms(xhat) * .face_norms(yhat))
+      }
       svals[noise] <- NA
       # bltodo: tpls explained variance?
       k_t_flatten_sort <- .obtain_k_t_flatten_sort(
@@ -362,8 +413,13 @@ tpls <- function(
         svals_matrix_form = TRUE
       )
 
-      # get indices corresponding to largest singular value
-      k_t_top <- .obtain_k_t_top(tsvdm_decomposition_xt_y$s)
+      # get indices corresponding to largest singular value, with each face
+      # first divided by its norms if faces are scaled
+      svals <- tsvdm_decomposition_xt_y$s
+      if (face_scaling == "frobenius") {
+        svals <- .scale_faces(svals, .face_norms(xhat) * .face_norms(yhat))
+      }
+      k_t_top <- .obtain_k_t_top(svals)
 
       # once t(X) %*% Y has no structure left, its largest singular value is
       # rounding noise and its singular vectors are arbitrary, so stop there
@@ -486,6 +542,7 @@ tpls <- function(
     y = y,
     mode = mode,
     transform_y = transform_y,
+    face_scaling = face_scaling,
     x_loadings = x_loadings,
     y_loadings = y_loadings,
     x_projected = x_projected,

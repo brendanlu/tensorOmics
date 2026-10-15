@@ -137,6 +137,9 @@
 #' Defaults to `multi_label`: a single label per subject is not transformed, so
 #' every face of x is compared with the labels themselves; labels repeated over
 #' time are transformed. See \code{\link{tpls}}.
+#' @param face_scaling How faces compete when each component picks one; see
+#' \code{\link{tpls}}. NULL by default: "frobenius" for a single label per
+#' subject, "none" for labels repeated over time.
 #'
 #' @inherit tpls return
 #' @return Adds \code{y_original}: the original labels input
@@ -153,6 +156,7 @@ tplsda <- function(
   minv = NULL,
   center = TRUE,
   transform_y = multi_label,
+  face_scaling = NULL,
   bpparam = NULL
 ) {
   # most parameter checking is done in tpls call, only the checks that are
@@ -176,6 +180,7 @@ tplsda <- function(
     mode = "regression",
     center = center,
     transform_y = transform_y,
+    face_scaling = face_scaling,
     bpparam = bpparam
   )
   output$y_original <- y_original_copy
