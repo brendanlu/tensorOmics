@@ -420,3 +420,41 @@ test_that(
     )
   }
 )
+
+test_that(
+  "tpls leaves a response fixed per subject untransformed",
+  code = {
+    n <- 10
+    p <- 6
+    t <- 3
+
+    set.seed(1)
+    test_x <- array(rnorm(n * p * t), dim = c(n, p, t))
+    # a rank 1 response with no time dimension
+    z <- rnorm(n)
+    test_y <- cbind(z, 2 * z)
+
+    tpls_mat <- tpls(test_x, test_y, ncomp = 1, mode = "canonical")
+    expect_false(tpls_mat$transform_y)
+
+    # the same response as a tensor constant in time, not to be transformed
+    tpls_tens <- tpls(
+      test_x, array(test_y, dim = c(n, 2, t)),
+      ncomp = 1, mode = "canonical", transform_y = FALSE
+    )
+    expect_identical(tpls_mat$x_loadings, tpls_tens$x_loadings)
+
+    # the first component exhausts a rank 1 response in canonical mode; as it is
+    # deflated on every face, no face has any of it left for a second
+    expect_warning(
+      tpls(test_x, test_y, ncomp = 2, mode = "canonical"),
+      "Only 1 of the 2 requested components"
+    )
+
+    test_y_varying <- array(rnorm(n * 2 * t), dim = c(n, 2, t))
+    expect_error(
+      tpls(test_x, test_y_varying, transform_y = FALSE),
+      "transform_y = FALSE needs a response that is fixed per subject"
+    )
+  }
+)

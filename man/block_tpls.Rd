@@ -19,12 +19,14 @@ block_tpls(
   tol = 1e-06,
   max_iter = 100,
   solve_dual = TRUE,
+  transform_y = NULL,
   bpparam = NULL
 )
 }
 \arguments{
 \item{a}{A list of tensor inputs (termed 'blocks') measured on the same
-samples.}
+samples. The target block may instead be a vector or an n x q matrix, for a
+response fixed per subject (see \code{transform_y}).}
 
 \item{y_ind}{Index of "target" block in \code{a}.}
 
@@ -81,6 +83,15 @@ formulation in the matrix RGCCA step that works with the gram matrix instead
 of the raw data. TRUE by default, only recommended to set to FALSE for
 testing purposes.}
 
+\item{transform_y}{Whether to m-transform the target block with the other
+blocks. NULL by default, which decides from its shape: a vector or an n x q
+matrix is a response fixed per subject and is not transformed, so that every
+face of the other blocks is compared with the response itself; an order-3
+tensor is transformed. An untransformed target block is deflated on every
+face after each component. TRUE copies a subject-fixed response over time and
+transforms it; FALSE needs a target block that is the same at every time
+point. See \code{\link{tpls}}.}
+
 \item{bpparam}{A \link[BiocParallel]{BiocParallelParam-class} object
 indicating the type of parallelisation. Does not have any effect if transform
 functions explicitly set using \code{m}, \code{minv}.}
@@ -94,6 +105,7 @@ A list containing:
 \item{design}{The design matrix used for block relationships.}
 \item{scheme}{The RGCCA scheme used ("horst", "factorial", "centroid").}
 \item{mode}{The PLS mode used ("canonical" or "regression").}
+\item{transform_y}{Whether the target block was m-transformed.}
 \item{pairwise_scoring}{The pairwise_scoring method used.}
 \item{loadings}{List of loadings matrices per block (p_i x ncomp).}
 \item{projected}{List of projected variates per block (n x ncomp).}

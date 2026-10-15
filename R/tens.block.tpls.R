@@ -551,7 +551,8 @@
 #' Developed @ Melbourne Integrative Genomics.
 #'
 #' @param a A list of tensor inputs (termed 'blocks') measured on the same
-#' samples.
+#' samples. The target block may instead be a vector or an n x q matrix, for a
+#' response fixed per subject (see `transform_y`).
 #' @param y_ind Index of "target" block in `a`.
 #' @param ncomp The estimated number of components. ncomp must be explicitly set
 #' as an integer in tpls.
@@ -594,6 +595,14 @@
 #' formulation in the matrix RGCCA step that works with the gram matrix instead
 #' of the raw data. TRUE by default, only recommended to set to FALSE for
 #' testing purposes.
+#' @param transform_y Whether to m-transform the target block with the other
+#' blocks. NULL by default, which decides from its shape: a vector or an n x q
+#' matrix is a response fixed per subject and is not transformed, so that every
+#' face of the other blocks is compared with the response itself; an order-3
+#' tensor is transformed. An untransformed target block is deflated on every
+#' face after each component. TRUE copies a subject-fixed response over time and
+#' transforms it; FALSE needs a target block that is the same at every time
+#' point. See \code{\link{tpls}}.
 #' @param bpparam A \link[BiocParallel]{BiocParallelParam-class} object
 #' indicating the type of parallelisation. Does not have any effect if transform
 #' functions explicitly set using \code{m}, \code{minv}.
@@ -608,6 +617,7 @@
 #'   \item{design}{The design matrix used for block relationships.}
 #'   \item{scheme}{The RGCCA scheme used ("horst", "factorial", "centroid").}
 #'   \item{mode}{The PLS mode used ("canonical" or "regression").}
+#'   \item{transform_y}{Whether the target block was m-transformed.}
 #'   \item{pairwise_scoring}{The pairwise_scoring method used.}
 #'   \item{loadings}{List of loadings matrices per block (p_i x ncomp).}
 #'   \item{projected}{List of projected variates per block (n x ncomp).}
@@ -632,6 +642,7 @@ block_tpls <- function(
   tol = 1e-06,
   max_iter = 100,
   solve_dual = TRUE,
+  transform_y = NULL,
   bpparam = NULL
 ) {
   # bltodo: add docs link to existing block.pls for user reference
@@ -647,8 +658,21 @@ block_tpls <- function(
     ))
   }
 
+  # a target block with no time dimension is fixed per subject, and is not
+  # transformed unless asked; lay it out over the time points of the others
+  subject_level_y <- length(dim(a[[y_ind]])) < 3
+  if (is.null(transform_y)) {
+    transform_y <- !subject_level_y
+  }
+  if (subject_level_y && length(dim(a[-y_ind][[1]])) == 3) {
+    a[[y_ind]] <- .subject_level_to_tensor(a[[y_ind]], dim(a[-y_ind][[1]])[3])
+  }
+
   # do some rough checks and return relevant dimensions
   dims <- .validate_block_tpls_x_y(a[-y_ind], a[[y_ind]])
+  if (!transform_y) {
+    .stop_time_varying_untransformed(a[[y_ind]])
+  }
   nblocks <- dims$nblocks # PLEASE NOTE: this is the number of "x" blocks
   n <- dims$n
   ps <- dims$ps # probably a bit confusing but this is only for "x" blocks
@@ -691,6 +715,11 @@ block_tpls <- function(
   # transform into hat-space
   # BLTODO: this is no longer centered?!
   ahat <- lapply(a, m)
+  # an untransformed target block stays as it is, so every face of the other
+  # blocks meets the response itself
+  if (!transform_y) {
+    ahat[[y_ind]] <- a[[y_ind]]
+  }
 
   # block_combination_idxs$i_idx looks like 1, 2, 3, 1, 2, 3, ...
   # block_combination_idxs$j_idx looks like 1, 1, 1, 2, 2, 2, ...
@@ -837,6 +866,11 @@ block_tpls <- function(
             )
           ) / nblocks
         }
+        # an untransformed target block is one matrix shared by every face, so
+        # it is deflated on every face
+        if (!transform_y) {
+          ahat[[j]] <- array(ahat[[j]][, , t_curr], dim = dim(ahat[[j]]))
+        }
       } else {
         ahat[[j]][, , t_curr] <- .deflate(
           mats_curr[[j]],
@@ -867,6 +901,7 @@ block_tpls <- function(
     design = validated_design,
     scheme = scheme,
     mode = mode,
+    transform_y = transform_y,
     pairwise_scoring = pairwise_scoring,
     loadings = tensor_blocks_loadings,
     projected = tensor_blocks_projected,

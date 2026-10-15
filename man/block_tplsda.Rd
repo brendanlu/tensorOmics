@@ -20,6 +20,7 @@ block_tplsda(
   tol = 1e-06,
   max_iter = 100,
   solve_dual = TRUE,
+  transform_y = multi_label,
   bpparam = NULL
 )
 }
@@ -85,6 +86,12 @@ for each 2D RGCCA call.}
 formulation in the matrix RGCCA step that works with the gram matrix instead
 of the raw data. TRUE by default, only recommended to set to FALSE for
 testing purposes.}
+
+\item{transform_y}{Whether to m-transform the class indicators with the
+blocks. Defaults to \code{multi_label}: a single label per subject is not
+transformed, so every face of the blocks is compared with the labels
+themselves; labels repeated over time are transformed. See
+\code{\link{block_tpls}}.}
 
 \item{bpparam}{A \link[BiocParallel]{BiocParallelParam-class} object
 indicating the type of parallelisation. Does not have any effect if transform

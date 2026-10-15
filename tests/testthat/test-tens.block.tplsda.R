@@ -77,3 +77,35 @@ test_that(
     expect_equal(dim(block_tplsda_mat$a[[y_ind]]), c(n, n * t, t))
   }
 )
+
+test_that(
+  "block_tplsda compares every face with a single label per subject",
+  code = {
+    n <- 20
+    p <- 10
+    t <- 4
+
+    set.seed(1)
+    # features 1 to 5 rise over time in group "a" and fall in group "b": the
+    # same mean, a different shape. One block, so that no block pairs other
+    # than the one with the labels enter the face selection
+    test_y <- rep(c("a", "b"), each = n / 2)
+    test_x <- array(rnorm(n * p * t), dim = c(n, p, t))
+    for (j in 1:5) {
+      test_x[, j, ] <- test_x[, j, ] +
+        outer(ifelse(test_y == "a", 1, -1), c(-1.5, -0.5, 0.5, 1.5))
+    }
+
+    # a transformed label is non-zero on face 1 only, the time averages
+    block_tplsda_transformed <- block_tplsda(
+      list(test_x), test_y, ncomp = 2, design = "full", transform_y = TRUE
+    )
+    expect_equal(as.vector(block_tplsda_transformed$faces), c(1, 1))
+
+    block_tplsda_obj <- block_tplsda(
+      list(test_x), test_y, ncomp = 2, design = "full"
+    )
+    expect_false(block_tplsda_obj$transform_y)
+    expect_true(block_tplsda_obj$faces[1] != 1)
+  }
+)
