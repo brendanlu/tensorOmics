@@ -59,6 +59,7 @@ test_that(
         test_a,
         test_y_ind,
         ncomp = ncomp_input,
+        design = "full",
         pairwise_scoring = pairwise_scoring_test,
         solve_dual = TRUE
       )
@@ -66,6 +67,7 @@ test_that(
         test_a,
         test_y_ind,
         ncomp = ncomp_input,
+        design = "full",
         pairwise_scoring = pairwise_scoring_test,
         solve_dual = FALSE
       )
@@ -112,27 +114,31 @@ test_that(
     )
     names(test_a_tens) <- block_names
 
-    mixomics_block_pls <- mixOmics::block.pls(
-      test_a_mats,
-      indY = y_ind,
-      ncomp = ncomp_input,
-      scale = FALSE
-    )
-    block_tpls_obj <- block_tpls(
-      test_a_tens,
-      y_ind,
-      ncomp = ncomp_input
-    )
+    for (curr_design in c("full", "null")) {
+      mixomics_block_pls <- mixOmics::block.pls(
+        test_a_mats,
+        indY = y_ind,
+        ncomp = ncomp_input,
+        design = curr_design,
+        scale = FALSE
+      )
+      block_tpls_obj <- block_tpls(
+        test_a_tens,
+        y_ind,
+        ncomp = ncomp_input,
+        design = curr_design
+      )
 
-    for (j in seq_len(j_total)) {
-      expect_equal(
-        .make_signs_consistent(mixomics_block_pls$loadings[[j]]),
-        .make_signs_consistent(block_tpls_obj$loadings[[j]])
-      )
-      expect_equal(
-        .make_signs_consistent(mixomics_block_pls$variates[[j]]),
-        .make_signs_consistent(block_tpls_obj$projected[[j]])
-      )
+      for (j in seq_len(j_total)) {
+        expect_equal(
+          .make_signs_consistent(mixomics_block_pls$loadings[[j]]),
+          .make_signs_consistent(block_tpls_obj$loadings[[j]])
+        )
+        expect_equal(
+          .make_signs_consistent(mixomics_block_pls$variates[[j]]),
+          .make_signs_consistent(block_tpls_obj$projected[[j]])
+        )
+      }
     }
   }
 )
@@ -165,29 +171,33 @@ test_that(
     )
     names(test_a_tens) <- block_names
 
-    mixomics_block_pls <- mixOmics::block.pls(
-      test_a_mats,
-      indY = y_ind,
-      ncomp = ncomp_input,
-      mode = "canonical",
-      scale = FALSE
-    )
-    block_tpls_obj <- block_tpls(
-      test_a_tens,
-      y_ind,
-      ncomp = ncomp_input,
-      mode = "canonical"
-    )
+    for (curr_design in c("full", "null")) {
+      mixomics_block_pls <- mixOmics::block.pls(
+        test_a_mats,
+        indY = y_ind,
+        ncomp = ncomp_input,
+        mode = "canonical",
+        design = curr_design,
+        scale = FALSE
+      )
+      block_tpls_obj <- block_tpls(
+        test_a_tens,
+        y_ind,
+        ncomp = ncomp_input,
+        mode = "canonical",
+        design = curr_design
+      )
 
-    for (j in seq_len(j_total)) {
-      expect_equal(
-        .make_signs_consistent(mixomics_block_pls$loadings[[j]]),
-        .make_signs_consistent(block_tpls_obj$loadings[[j]])
-      )
-      expect_equal(
-        .make_signs_consistent(mixomics_block_pls$variates[[j]]),
-        .make_signs_consistent(block_tpls_obj$projected[[j]])
-      )
+      for (j in seq_len(j_total)) {
+        expect_equal(
+          .make_signs_consistent(mixomics_block_pls$loadings[[j]]),
+          .make_signs_consistent(block_tpls_obj$loadings[[j]])
+        )
+        expect_equal(
+          .make_signs_consistent(mixomics_block_pls$variates[[j]]),
+          .make_signs_consistent(block_tpls_obj$projected[[j]])
+        )
+      }
     }
   }
 )
@@ -214,6 +224,7 @@ test_that(
       block_tpls(
         test_x,
         test_y_ind,
+        design = "full",
         pairwise_scoring = unsupported_pairwise_scoring
       ),
       # code produces one-liner error message
@@ -251,7 +262,8 @@ test_that(
     block_tpls_obj <- block_tpls(
       test_a,
       1, # doesn't really matter what the "y" block is for this test
-      ncomp = ncomp_input
+      ncomp = ncomp_input,
+      design = "full"
     )
 
     for (i in seq_along(test_a)) {
@@ -293,5 +305,26 @@ test_that(
       design = "null"
     )
     expect_equal(as.vector(block_tpls_obj$faces), rep(1, ncomp_input))
+  }
+)
+
+test_that(
+  "block_tpls and block_tplsda require a design",
+  code = {
+    n <- 7
+    ps <- c(10, 5, 2)
+    t <- 4
+
+    set.seed(1)
+    test_a <- lapply(
+      ps,
+      function(p) array(rnorm(n * p * t), dim = c(n, p, t))
+    )
+
+    expect_error(block_tpls(test_a, 3), "design must be explicitly set")
+    expect_error(
+      block_tplsda(test_a[1:2], rep(c("a", "b"), length.out = n)),
+      "design must be explicitly set"
+    )
   }
 )

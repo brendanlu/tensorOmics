@@ -33,9 +33,9 @@ test_that(
     test_y_mat <- array(test_y_vec, dim = c(n, 1))
     test_y_tens <- array(test_y_vec, dim = c(n, 1, 1))
 
-    block_tplsda_vec <- block_tplsda(test_x, test_y_vec)
-    block_tplsda_mat <- block_tplsda(test_x, test_y_mat)
-    block_tplsda_tens <- block_tplsda(test_x, test_y_tens)
+    block_tplsda_vec <- block_tplsda(test_x, test_y_vec, design = "full")
+    block_tplsda_mat <- block_tplsda(test_x, test_y_mat, design = "full")
+    block_tplsda_tens <- block_tplsda(test_x, test_y_tens, design = "full")
 
     expect_equal(block_tplsda_vec$a[[y_ind]], block_tplsda_mat$a[[y_ind]])
     expect_equal(block_tplsda_mat$a[[y_ind]], block_tplsda_tens$a[[y_ind]])
@@ -61,8 +61,12 @@ test_that(
     test_y_mat <- array(letters[1:(n * t)], dim = c(n, t))
     test_y_tens <- array(letters[1:(n * t)], dim = c(n, 1, t))
 
-    block_tplsda_mat <- block_tplsda(test_x, test_y_mat, multi_label = TRUE)
-    block_tplsda_tens <- block_tplsda(test_x, test_y_tens, multi_label = TRUE)
+    block_tplsda_mat <- block_tplsda(
+      test_x, test_y_mat, multi_label = TRUE, design = "full"
+    )
+    block_tplsda_tens <- block_tplsda(
+      test_x, test_y_tens, multi_label = TRUE, design = "full"
+    )
 
     # both multi_label y inputs should lead to the same underlying tpls call
     expect_equal(block_tplsda_mat$a[[y_ind]], block_tplsda_tens$a[[y_ind]])
