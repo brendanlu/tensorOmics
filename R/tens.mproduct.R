@@ -263,18 +263,28 @@ dctii_m_transforms <- function(t, bpparam = NULL) {
     # for-loop algorithm -------------------------------------------------------
     out <- array(0, dim = c(na, pb, t))
     for (i in seq_len(t)) {
-      out[, , i] <- a[, , i] %*% b[, , i]
+      # matrix() keeps each face 2D when a dimension is 1, where `[` would drop
+      # it to a vector and %*% would either fail or, for an n x 1 by 1 x n
+      # product, silently return the inner product instead of the outer one
+      out[, , i] <- matrix(a[, , i], nrow = na, ncol = pa) %*%
+        matrix(b[, , i], nrow = nb, ncol = pb)
     }
     # --------------------------------------------------------------------------
   } else {
     # BiocParallel algorithm ---------------------------------------------------
     # bltodo: benchmark / investigate preallocation here?
-    out <- simplify2array(
-      BiocParallel::bplapply(
+    # build the array from the known dimensions: simplify2array() flattens
+    # the result to a plain vector when every face is 1 x 1
+    out <- array(
+      unlist(BiocParallel::bplapply(
         array(seq_len(t)),
-        FUN = function(i) a[, , i] %*% b[, , i],
+        FUN = function(i) {
+          matrix(a[, , i], nrow = na, ncol = pa) %*%
+            matrix(b[, , i], nrow = nb, ncol = pb)
+        },
         BPPARAM = bpparam
-      )
+      )),
+      dim = c(na, pb, t)
     )
     # --------------------------------------------------------------------------
   }

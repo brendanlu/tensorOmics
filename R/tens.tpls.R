@@ -308,7 +308,10 @@ tpls <- function(
       # xi, omega (Wegelin); t, u (Kim-Anh); scores (scikit-learn)
       # note that only one face of xhat and yhat is relevant per iteration
       curr_x_projected <- xhat[, , k_t_top[2]] %*% curr_x_loadings
-      curr_y_projected <- yhat[, , k_t_top[2]] %*% curr_y_loadings
+      # matrix() keeps the face n x q when q = 1, where `[` would drop it to a
+      # vector and %*% would reject the vector-by-vector product
+      curr_y_projected <- matrix(yhat[, , k_t_top[2]], nrow = n) %*%
+        curr_y_loadings
 
       # gamma (Wegelin); c (Kim-Anh); loadings (scikit-learn)
       # the calculation of the x regression coefficient and deflation step of
