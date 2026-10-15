@@ -194,8 +194,10 @@ tpca <- function(
   # bltodo: benchmark this against \eqn{new_data *_M vhat}
   # bltodo: zero out uhat first? svd truncates it to rank already, but can
   # further truncate to ncomp columns?
+  # uhat is n x k x t (k = min(n, p)), so the singular values tensor needs k
+  # rows, not n, for the facewise product to conform when n > p
   x_projected <- tsvdm_decomposition$uhat %fp%
-    .singular_vals_mat_to_tens(tsvdm_decomposition$shat, dim = c(n, p, t))
+    .singular_vals_mat_to_tens(tsvdm_decomposition$shat, dim = c(k, p, t))
 
   loadings <- tsvdm_decomposition$vhat
 
