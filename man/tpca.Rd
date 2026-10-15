@@ -46,6 +46,14 @@ A list containing:
 \item{x}{The centered input tensor.}
 \item{loadings}{The loadings matrix or tensor.}
 \item{variates}{The projected data in the reduced space.}
+\item{center}{Whether x was centered.}
+\item{mean_slice}{The mean horizontal slice subtracted from x (p x t), or
+NULL if it was not centered.}
+\item{m, minv}{The transform pair used.}
+\item{matrix_output}{Whether the output is in matrix form.}
+\item{features, faces}{The (column, face) index of each component in the
+transformed singular value decomposition (only when
+\code{matrix_output = TRUE}).}
 }
 }
 \description{

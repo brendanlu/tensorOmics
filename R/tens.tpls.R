@@ -242,6 +242,15 @@
 #'   when `matrix_output = TRUE`).}
 #'   \item{faces}{Vector of selected tensor face indices per component (only
 #'   when `matrix_output = TRUE`).}
+#'   \item{center}{Whether x and y were centered.}
+#'   \item{mean_slice_x, mean_slice_y}{The mean horizontal slices subtracted
+#'   from x (p x t) and y (q x t), or NULL if they were not centered.}
+#'   \item{m, minv}{The transform pair used.}
+#'   \item{x_reg_coefs}{The X deflation coefficients of each component
+#'   (p x ncomp), NULL in tsvdm mode.}
+#'   \item{y_reg_coefs}{In regression mode, the coefficients of Y on the X
+#'   variates of each component (q x ncomp), which deflate Y; NULL in canonical
+#'   and tsvdm modes.}
 #' }
 #' @author Brendan Lu
 #' @export
@@ -308,12 +317,18 @@ tpls <- function(
   m <- validated_transforms$m
   minv <- validated_transforms$minv
 
+  mean_slice_x <- NULL
+  mean_slice_y <- NULL
   if (center) {
     mean_slice_x <- apply(x, c(2, 3), mean)
     mean_slice_y <- apply(y, c(2, 3), mean)
     x <- sweep(x, c(2, 3), STATS = mean_slice_x, FUN = "-")
     y <- sweep(y, c(2, 3), STATS = mean_slice_y, FUN = "-")
   }
+  # the deflation coefficients of each component, kept so that new samples can
+  # be projected and their response predicted
+  x_reg_coefs <- NULL
+  y_reg_coefs <- NULL
 
   # project x and y into 'hat-space', expensive computation so do it once and
   # save into variable
@@ -398,6 +413,8 @@ tpls <- function(
     y_loadings <- array(0, dim = c(q, ncomp))
     x_projected <- array(0, dim = c(n, ncomp))
     y_projected <- array(0, dim = c(n, ncomp))
+    x_reg_coefs <- array(0, dim = c(p, ncomp))
+    y_reg_coefs <- array(0, dim = c(q, ncomp))
     ncomp_kept <- ncomp
 
     for (i in seq_len(ncomp)) {
@@ -445,8 +462,9 @@ tpls <- function(
       curr_y_loadings <- tsvdm_decomposition_xt_y$v[, k_t_top[1], k_t_top[2]]
 
       # perform deflation ------------------------------------------------------
-      # this is deliberately done in a fashion to match scikit-learn's code
-      # and we could consider returning the reg_coef's in the future
+      # this is deliberately done in a fashion to match scikit-learn's code;
+      # the regression coefficients are returned as x_reg_coefs and
+      # y_reg_coefs
       # using k_t_top[2] we just work in matrix world for this step
 
       # xi, omega (Wegelin); t, u (Kim-Anh); scores (scikit-learn)
@@ -498,6 +516,8 @@ tpls <- function(
       y_loadings[, i] <- curr_y_loadings
       x_projected[, i] <- curr_x_projected
       y_projected[, i] <- curr_y_projected
+      x_reg_coefs[, i] <- curr_x_reg_coef
+      y_reg_coefs[, i] <- curr_y_reg_coef
     }
 
     if (ncomp_kept < ncomp) {
@@ -512,6 +532,8 @@ tpls <- function(
       y_loadings <- y_loadings[, keep, drop = FALSE]
       x_projected <- x_projected[, keep, drop = FALSE]
       y_projected <- y_projected[, keep, drop = FALSE]
+      x_reg_coefs <- x_reg_coefs[, keep, drop = FALSE]
+      y_reg_coefs <- y_reg_coefs[, keep, drop = FALSE]
       features <- features[keep]
       faces <- faces[keep]
       ncomp <- ncomp_kept
@@ -533,6 +555,10 @@ tpls <- function(
     dimnames(x_projected) <- .dimnames_for_projections_mat(x)
     dimnames(y_loadings) <- .dimnames_for_loadings_mat(y)
     dimnames(y_projected) <- .dimnames_for_projections_mat(y)
+    if (!is.null(x_reg_coefs)) {
+      dimnames(x_reg_coefs) <- dimnames(x_loadings)
+      dimnames(y_reg_coefs) <- dimnames(y_loadings)
+    }
   }
 
   # prepare output
@@ -548,7 +574,17 @@ tpls <- function(
     x_projected = x_projected,
     y_projected = y_projected,
     features = features,
-    faces = faces
+    faces = faces,
+    # what is needed to project new samples and predict their response
+    center = center,
+    mean_slice_x = mean_slice_x,
+    mean_slice_y = mean_slice_y,
+    m = m,
+    minv = minv,
+    x_reg_coefs = x_reg_coefs,
+    # in canonical mode Y is deflated by its own variates, so its
+    # coefficients do not predict Y from X
+    y_reg_coefs = if (mode == "regression") y_reg_coefs else NULL
   )
   class(output) <- "tpls"
   return(invisible(output))

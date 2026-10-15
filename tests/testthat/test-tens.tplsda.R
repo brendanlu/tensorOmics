@@ -226,3 +226,35 @@ test_that(
     expect_equal(tplsda_multi$face_scaling, "none")
   }
 )
+
+test_that(
+  "tplsda returns the class names in the order of the indicator columns",
+  code = {
+    n <- 18
+    p <- 10
+    t <- 3
+
+    set.seed(1)
+    test_x <- array(rnorm(n * p * t), dim = c(n, p, t))
+    # labels whose sorted order is not their order of appearance
+    test_y <- rep(c("b", "10", "a"), each = n / 3)
+
+    tplsda_obj <- tplsda(test_x, test_y, ncomp = 2)
+    expect_false(tplsda_obj$multi_label)
+    expect_equal(tplsda_obj$levels, c("10", "a", "b"))
+    # the centered indicator column of each class is positive exactly for its
+    # samples
+    for (j in seq_along(tplsda_obj$levels)) {
+      expect_equal(tplsda_obj$y[, j, 1] > 0, test_y == tplsda_obj$levels[j])
+    }
+
+    # labels repeated over time: the levels of each time point in turn, so
+    # "0", which appears only at the last one, comes last although it sorts
+    # first
+    test_y_time <- matrix(test_y, n, t)
+    test_y_time[test_y == "a", t] <- "0"
+    tplsda_multi <- tplsda(test_x, test_y_time, multi_label = TRUE, ncomp = 2)
+    expect_true(tplsda_multi$multi_label)
+    expect_equal(tplsda_multi$levels, c("10", "a", "b", "0"))
+  }
+)
