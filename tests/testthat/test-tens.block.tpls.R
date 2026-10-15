@@ -328,3 +328,137 @@ test_that(
     )
   }
 )
+
+test_that(
+  "block_tpls returns what is needed to project new samples",
+  code = {
+    n <- 15
+    q <- 3
+    t <- 4
+
+    set.seed(1)
+    # the second block has more features than samples, so it is solved in
+    # its dual form
+    test_x <- list(
+      array(rnorm(n * 12 * t), dim = c(n, 12, t)),
+      array(rnorm(n * 20 * t), dim = c(n, 20, t))
+    )
+    test_y_tens <- array(rnorm(n * q * t), dim = c(n, q, t))
+    test_y_mat <- matrix(rnorm(n * q), n, q)
+
+    for (curr_mode in c("regression", "canonical")) {
+      for (test_y in list(test_y_tens, test_y_mat)) {
+        block_obj <- block_tpls(
+          c(test_x, list(test_y)), 3,
+          ncomp = 4, mode = curr_mode, design = 0.5
+        )
+        # components that share a face test the deflation coefficients, not
+        # just the loadings
+        expect_true(anyDuplicated(block_obj$faces) > 0)
+        expect_true(block_obj$center)
+        # the transform pair, minv undoing m
+        expect_equal(block_obj$minv(block_obj$m(test_x[[1]])), test_x[[1]])
+        expect_equal(
+          block_obj$mean_slices[[3]],
+          if (is.matrix(test_y)) matrix(colMeans(test_y), q, t) else
+            apply(test_y, c(2, 3), mean)
+        )
+        expect_null(block_obj$x_reg_coefs[[3]])
+        if (curr_mode == "regression") {
+          expect_null(block_obj$y_reg_coefs[[3]])
+          for (b in 1:2) {
+            expect_equal(dim(block_obj$y_reg_coefs[[b]]), c(q, 4))
+          }
+        } else {
+          expect_null(block_obj$y_reg_coefs)
+        }
+
+        # from the raw data and the stored quantities alone, the components of
+        # each face project with that block's rotation W (t(P) W)^-1
+        for (b in 1:2) {
+          expect_equal(
+            block_obj$mean_slices[[b]],
+            apply(test_x[[b]], c(2, 3), mean)
+          )
+          xhat <- block_obj$m(sweep(
+            test_x[[b]], c(2, 3),
+            STATS = block_obj$mean_slices[[b]], FUN = "-"
+          ))
+          projected <- matrix(0, n, block_obj$ncomp)
+          for (f in unique(block_obj$faces)) {
+            idx <- which(block_obj$faces == f)
+            w <- block_obj$loadings[[b]][, idx, drop = FALSE]
+            p_coefs <- block_obj$x_reg_coefs[[b]][, idx, drop = FALSE]
+            projected[, idx] <- matrix(xhat[, , f], nrow = n) %*%
+              w %*% solve(crossprod(p_coefs, w))
+          }
+          expect_equal(projected, unname(block_obj$projected[[b]]))
+        }
+      }
+    }
+  }
+)
+
+test_that(
+  "block_tpls with one X block has the deflation coefficients of tpls",
+  code = {
+    n <- 15
+    p <- 10
+    q <- 2
+    t <- 4
+
+    set.seed(1)
+    test_x <- array(rnorm(n * p * t), dim = c(n, p, t))
+
+    # with two blocks the RGCCA step is the PLS step; a strict tolerance lets
+    # it converge to the same weights
+    for (test_y in list(
+      array(rnorm(n * q * t), dim = c(n, q, t)),
+      matrix(rnorm(n * q), n, q)
+    )) {
+      tpls_obj <- tpls(test_x, test_y, ncomp = 3)
+      block_obj <- block_tpls(
+        list(test_x, test_y), 2,
+        ncomp = 3, design = "full", tol = 1e-14, max_iter = 1e5
+      )
+      expect_equal(as.vector(block_obj$faces), as.vector(tpls_obj$faces))
+
+      # the coefficients change sign with the component
+      signs <- sign(colSums(block_obj$loadings[[1]] * tpls_obj$x_loadings))
+      expect_equal(
+        unname(sweep(block_obj$x_reg_coefs[[1]], 2, signs, "*")),
+        unname(tpls_obj$x_reg_coefs),
+        tolerance = 1e-6
+      )
+      expect_equal(
+        unname(sweep(block_obj$y_reg_coefs[[1]], 2, signs, "*")),
+        unname(tpls_obj$y_reg_coefs),
+        tolerance = 1e-6
+      )
+    }
+  }
+)
+
+test_that(
+  "block_tpls names its coefficients after the blocks and their features",
+  code = {
+    n <- 10
+    t <- 3
+
+    set.seed(1)
+    test_a <- list(
+      A = array(rnorm(n * 6 * t), dim = c(n, 6, t),
+                dimnames = list(NULL, paste0("a", 1:6), NULL)),
+      B = array(rnorm(n * 4 * t), dim = c(n, 4, t),
+                dimnames = list(NULL, paste0("b", 1:4), NULL)),
+      Y = array(rnorm(n * 2 * t), dim = c(n, 2, t),
+                dimnames = list(NULL, c("y1", "y2"), NULL))
+    )
+    block_obj <- block_tpls(test_a, 3, ncomp = 2, design = "full")
+
+    expect_equal(names(block_obj$x_reg_coefs), c("A", "B", "Y"))
+    expect_equal(names(block_obj$y_reg_coefs), c("A", "B", "Y"))
+    expect_equal(rownames(block_obj$x_reg_coefs$A), paste0("a", 1:6))
+    expect_equal(rownames(block_obj$y_reg_coefs$B), c("y1", "y2"))
+  }
+)

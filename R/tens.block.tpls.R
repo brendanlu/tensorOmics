@@ -542,8 +542,17 @@
 #' @noRd
 .deflate <- function(mat, projected) {
   # see tpls.R code for details to match literature
-  reg_coef <- crossprod(mat, projected) / as.numeric(crossprod(projected))
+  reg_coef <- .reg_coef(mat, projected)
   return(mat - tcrossprod(projected, reg_coef))
+}
+
+#' Regression coefficients of a matrix on a vector of projections, as .deflate()
+#' uses them.
+#'
+#' @keywords internal
+#' @noRd
+.reg_coef <- function(mat, projected) {
+  return(crossprod(mat, projected) / as.numeric(crossprod(projected)))
 }
 
 #' Tensor block PLS
@@ -630,6 +639,15 @@
 #'   \item{projected}{List of projected variates per block (n x ncomp).}
 #'   \item{iters}{Vector of iteration counts for each component.}
 #'   \item{faces}{Vector of selected tensor face indices per component.}
+#'   \item{center}{Whether the blocks were centered.}
+#'   \item{mean_slices}{List of the mean horizontal slices subtracted from each
+#'   block, or NULL if they were not centered.}
+#'   \item{m, minv}{The transform pair used.}
+#'   \item{x_reg_coefs}{List of each X block's deflation coefficients
+#'   (p_i x ncomp), NULL for the target block.}
+#'   \item{y_reg_coefs}{In regression mode, list of the target block's
+#'   coefficients on each X block's projection (q x ncomp), NULL for the target
+#'   block; NULL in canonical mode.}
 #' }
 #'
 #' @author Brendan Lu
@@ -712,6 +730,7 @@ block_tpls <- function(
   # this probably creates more headache than realistic user utility
   pairwise_scoring_func <- .score_parser(pairwise_scoring)
 
+  mean_slice_a <- NULL
   if (center) {
     # almost identical to centering in tpca / tpls but applied on a list
     mean_slice_a <- lapply(a, FUN = function(tens) apply(tens, c(2, 3), mean))
@@ -753,6 +772,17 @@ block_tpls <- function(
     seq_len(nblocks + 1),
     function(i) array(0, dim = c(n, ncomp))
   )
+  # kept so that new samples can be projected and their response predicted:
+  # each X block's deflation coefficients, and in regression mode the target
+  # block's coefficients on each X block's projection, whose average deflates
+  # the target
+  x_reg_coefs <- tensor_blocks_loadings
+  x_reg_coefs[y_ind] <- list(NULL)
+  y_reg_coefs <- lapply(
+    seq_len(nblocks + 1),
+    function(i) array(0, dim = c(q, ncomp))
+  )
+  y_reg_coefs[y_ind] <- list(NULL)
   names(tensor_blocks_loadings) <- names(tensor_blocks_projected) <- names(a)
   iters <- array(0, dim = ncomp)
   faces <- array(0, dim = ncomp)
@@ -898,6 +928,14 @@ block_tpls <- function(
           mats_curr[[j]],
           curr_all_mats_projected[, j]
         )
+        x_reg_coefs[[j]][, i] <- .reg_coef(
+          mats_curr[[j]],
+          curr_all_mats_projected[, j]
+        )
+        y_reg_coefs[[j]][, i] <- .reg_coef(
+          mats_curr[[y_ind]],
+          curr_all_mats_projected[, j]
+        )
       }
 
       # also fill in the loadings and projections in this for-loop
@@ -914,6 +952,11 @@ block_tpls <- function(
     dimnames(tensor_blocks_loadings[[i]]) <- .dimnames_for_loadings_mat(a[[i]])
     dimnames(tensor_blocks_projected[[i]]) <- .dimnames_for_projections_mat(a[[i]])
   }
+  for (i in setdiff(seq_along(a), y_ind)) {
+    dimnames(x_reg_coefs[[i]]) <- dimnames(tensor_blocks_loadings[[i]])
+    dimnames(y_reg_coefs[[i]]) <- dimnames(tensor_blocks_loadings[[y_ind]])
+  }
+  names(x_reg_coefs) <- names(y_reg_coefs) <- names(a)
 
   # prepare output
   output <- list(
@@ -929,7 +972,14 @@ block_tpls <- function(
     loadings = tensor_blocks_loadings,
     projected = tensor_blocks_projected,
     iters = iters,
-    faces = faces
+    faces = faces,
+    # what is needed to project new samples and predict their response
+    center = center,
+    mean_slices = mean_slice_a,
+    m = m,
+    minv = minv,
+    x_reg_coefs = x_reg_coefs,
+    y_reg_coefs = if (mode == "regression") y_reg_coefs else NULL
   )
   class(output) <- "block_tpls"
   return(invisible(output))

@@ -120,6 +120,15 @@ A list containing:
 \item{projected}{List of projected variates per block (n x ncomp).}
 \item{iters}{Vector of iteration counts for each component.}
 \item{faces}{Vector of selected tensor face indices per component.}
+\item{center}{Whether the blocks were centered.}
+\item{mean_slices}{List of the mean horizontal slices subtracted from each
+block, or NULL if they were not centered.}
+\item{m, minv}{The transform pair used.}
+\item{x_reg_coefs}{List of each X block's deflation coefficients
+(p_i x ncomp), NULL for the target block.}
+\item{y_reg_coefs}{In regression mode, list of the target block's
+coefficients on each X block's projection (q x ncomp), NULL for the target
+block; NULL in canonical mode.}
 }
 }
 \description{
