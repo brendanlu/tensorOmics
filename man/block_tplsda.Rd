@@ -104,7 +104,8 @@ functions explicitly set using \code{m}, \code{minv}.}
 }
 \value{
 Adds \code{y_original}: the original labels input
-(vector/matrix/tensor) passed to \code{block_tplsda()}.
+(vector/matrix/tensor) passed to \code{block_tplsda()}; \code{multi_label};
+and \code{levels}, the class names in the order of the indicator columns.
 }
 \description{
 Developed @ Melbourne Integrative Genomics.

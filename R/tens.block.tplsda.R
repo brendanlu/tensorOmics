@@ -46,7 +46,8 @@
 #'
 #' @inherit block_tpls return
 #' @return Adds \code{y_original}: the original labels input
-#' (vector/matrix/tensor) passed to \code{block_tplsda()}.
+#' (vector/matrix/tensor) passed to \code{block_tplsda()}; \code{multi_label};
+#' and \code{levels}, the class names in the order of the indicator columns.
 #' @author Brendan Lu
 #' @export
 block_tplsda <- function(
@@ -128,6 +129,8 @@ block_tplsda <- function(
     bpparam = bpparam
   )
   output$y_original <- y_original_copy
+  output$multi_label <- multi_label
+  output$levels <- .indicator_levels(y_original_copy, multi_label)
   class(output) <- "block_tplsda"
   return(invisible(output))
 }
