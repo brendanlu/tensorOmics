@@ -383,3 +383,40 @@ test_that(
     }
   }
 )
+
+test_that(
+  "tpls stops at the last component that t(X) Y can support",
+  code = {
+    n <- 20
+    p <- 8
+    t <- 4
+
+    set.seed(1)
+    test_x <- array(rnorm(n * p * t), dim = c(n, p, t))
+    # the same two columns at every time point: rank 2, so canonical mode has
+    # nothing left to extract after two components
+    test_y <- array(rep(rnorm(n * 2), t), dim = c(n, 2, t))
+
+    expect_warning(
+      tpls_obj <- tpls(test_x, test_y, ncomp = 4, mode = "canonical"),
+      "Only 2 of the 4 requested components"
+    )
+    expect_equal(tpls_obj$ncomp, 2)
+    expect_equal(dim(tpls_obj$x_loadings), c(p, 2))
+
+    # tsvdm mode keeps only the two non-zero singular values; a noise component
+    # would sit on a face where y is zero, so its y scores would be zero
+    expect_warning(
+      tpls_tsvdm <- tpls(test_x, test_y, ncomp = 4, mode = "tsvdm"),
+      "Only 2 of the 4 requested components"
+    )
+    expect_true(all(sqrt(colSums(tpls_tsvdm$y_projected^2)) > 1e-8))
+
+    # a response that varies over time supports all four components
+    test_y_varying <- array(rnorm(n * 2 * t), dim = c(n, 2, t))
+    expect_warning(
+      tpls(test_x, test_y_varying, ncomp = 4, mode = "canonical"),
+      NA
+    )
+  }
+)

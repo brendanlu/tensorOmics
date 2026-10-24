@@ -168,9 +168,16 @@ tpca <- function(
   total_var <- sum(squared_singular_values)
   explained_variance_ratio <- squared_singular_values / total_var
 
+  # count the singular values above rounding noise, relative to the largest
+  # (the tolerance MASS::ginv uses); centering, for one, leaves the smallest
+  # singular value of each face at zero when n <= p
+  ncomp_real <- sum(
+    singular_values >= sqrt(.Machine$double.eps) * singular_values[1]
+  )
+
   # process ncomp input
   if (is.null(ncomp)) {
-    ncomp <- k * t
+    ncomp <- ncomp_real
   } else if (ncomp > 0 && ncomp < 1) {
     # pick ncomp to be minimum number of integer components to explain the
     # inputted variance
@@ -178,6 +185,13 @@ tpca <- function(
     ncomp <- findInterval(ncomp, ratio_cumsum) + 1
   } else if (ncomp %% 1 == 0) {
     stopifnot(ncomp > 0 && ncomp <= (k * t))
+    if (ncomp > ncomp_real) {
+      warning(sprintf(paste(
+        "Only %d of the %d requested components were returned: after",
+        "component %d, x has no structure left to extract"
+      ), ncomp_real, ncomp, ncomp_real))
+      ncomp <- ncomp_real
+    }
   } else {
     stop("Please input an integer, 0 < float < 1, or NULL for ncomp parameter")
   }

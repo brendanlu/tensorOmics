@@ -197,7 +197,9 @@ tpls <- function(
   # deficient data they are not aware of...?
   max_rank <- k * t
 
-  # check user ncomp is sensible, or impute NULL input
+  # check user ncomp is sensible, or impute NULL input; remember whether the
+  # user asked for a number, to warn if fewer components can be returned
+  ncomp_requested <- !is.null(ncomp)
   ncomp <- .validate_integer_ncomp(ncomp, max_rank)
 
   # use dctii as default transform if user does not specify an explicit one
@@ -241,9 +243,24 @@ tpls <- function(
     y_projected <- yhat %fp% y_loadings
 
     if (matrix_output) {
+      # singular values below rounding noise (the tolerance the component loop
+      # below uses) become NA: order() puts NA last whichever way it sorts, so
+      # they are never selected
+      svals <- tsvdm_decomposition_xt_y$s
+      noise <- svals < sqrt(.Machine$double.eps) * max(svals)
+      if (ncomp > sum(!noise)) {
+        if (ncomp_requested) {
+          warning(sprintf(paste(
+            "Only %d of the %d requested components were returned: after",
+            "component %d, t(X) %%*%% Y has no structure left to extract"
+          ), sum(!noise), ncomp, sum(!noise)))
+        }
+        ncomp <- sum(!noise)
+      }
+      svals[noise] <- NA
       # bltodo: tpls explained variance?
       k_t_flatten_sort <- .obtain_k_t_flatten_sort(
-        tsvdm_decomposition_xt_y$s,
+        svals,
         ncomp
       )
       # populate features and faces from k_t_flatten_sort
@@ -274,6 +291,7 @@ tpls <- function(
     y_loadings <- array(0, dim = c(q, ncomp))
     x_projected <- array(0, dim = c(n, ncomp))
     y_projected <- array(0, dim = c(n, ncomp))
+    ncomp_kept <- ncomp
 
     for (i in seq_len(ncomp)) {
       # compute tsvdm
@@ -290,6 +308,20 @@ tpls <- function(
 
       # get indices corresponding to largest singular value
       k_t_top <- .obtain_k_t_top(tsvdm_decomposition_xt_y$s)
+
+      # once t(X) %*% Y has no structure left, its largest singular value is
+      # rounding noise and its singular vectors are arbitrary, so stop there
+      # (the relative tolerance is the one MASS::ginv uses)
+      curr_singular_value <- tsvdm_decomposition_xt_y$s[k_t_top[1], k_t_top[2]]
+      if (i == 1) {
+        first_singular_value <- curr_singular_value
+      } else if (
+        curr_singular_value < sqrt(.Machine$double.eps) * first_singular_value
+      ) {
+        ncomp_kept <- i - 1
+        break
+      }
+
       features[i] <- k_t_top[1]
       faces[i] <- k_t_top[2]
       # u, v (Wegelin); a, b (Kim-Anh); weights (scikit-learn)
@@ -348,6 +380,23 @@ tpls <- function(
       y_loadings[, i] <- curr_y_loadings
       x_projected[, i] <- curr_x_projected
       y_projected[, i] <- curr_y_projected
+    }
+
+    if (ncomp_kept < ncomp) {
+      if (ncomp_requested) {
+        warning(sprintf(paste(
+          "Only %d of the %d requested components were returned: after",
+          "component %d, t(X) %%*%% Y has no structure left to extract"
+        ), ncomp_kept, ncomp, ncomp_kept))
+      }
+      keep <- seq_len(ncomp_kept)
+      x_loadings <- x_loadings[, keep, drop = FALSE]
+      y_loadings <- y_loadings[, keep, drop = FALSE]
+      x_projected <- x_projected[, keep, drop = FALSE]
+      y_projected <- y_projected[, keep, drop = FALSE]
+      features <- features[keep]
+      faces <- faces[keep]
+      ncomp <- ncomp_kept
     }
 
   } else {

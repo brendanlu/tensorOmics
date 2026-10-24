@@ -36,7 +36,10 @@ test_that(
     p <- 5
     t <- 3
     ncomp_input <- 2
-    test_tensor <- array(1:(n * p * t), dim = c(n, p, t))
+    # random data: array(1:(n * p * t)) is rank 1 once centered, so a second
+    # component would be rounding noise
+    set.seed(1)
+    test_tensor <- array(rnorm(n * p * t, mean = 0, sd = 5), dim = c(n, p, t))
     tpca_obj <- tpca(test_tensor, ncomp = ncomp_input)
     # removed explained_variance output pending theory development to ensure
     # it's legit first
@@ -156,5 +159,27 @@ test_that(
       .make_signs_consistent(mixomics_pca$variates$X),
       .make_signs_consistent(tensor_pca$variates)
     )
+  }
+)
+
+test_that(
+  "tpca stops at the rank that centering leaves",
+  code = {
+    n <- 6
+    p <- 10
+    t <- 3
+
+    set.seed(1)
+    test_x <- array(rnorm(n * p * t), dim = c(n, p, t))
+
+    # centering leaves rank n - 1 on each face, so (n - 1) * t components
+    expect_warning(tpca_default <- tpca(test_x), NA)
+    expect_equal(tpca_default$ncomp, (n - 1) * t)
+
+    expect_warning(
+      tpca_obj <- tpca(test_x, ncomp = n * t),
+      "Only 15 of the 18 requested components"
+    )
+    expect_equal(dim(tpca_obj$loadings), c(p, (n - 1) * t))
   }
 )
