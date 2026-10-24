@@ -14,6 +14,7 @@ tpls(
   center = TRUE,
   matrix_output = TRUE,
   transform_y = NULL,
+  face_scaling = NULL,
   bpparam = NULL
 )
 }
@@ -56,6 +57,15 @@ every face after each component. TRUE copies a subject-fixed response over
 time and transforms it; FALSE needs a response that is the same at every
 time point.}
 
+\item{face_scaling}{How faces compete when each component picks one.
+"frobenius" divides each face's score, the largest singular value of
+t(xhat_f) yhat_f, by the Frobenius norms of xhat_f and yhat_f, so that faces
+compete on a common scale. "none" compares the raw scores, which favours the
+face with most variance; under the default DCT that is face 1, which also
+holds the between-subject variation. It affects which face is chosen only.
+NULL by default: "frobenius" for an untransformed response, "none"
+otherwise.}
+
 \item{bpparam}{A \link[BiocParallel]{BiocParallelParam-class} object
 indicating the type of parallelisation. Does not have any effect if transform
 functions explicitly set using \code{m}, \code{minv}.}
@@ -68,6 +78,7 @@ A list containing:
 \item{y}{The centered input tensor Y.}
 \item{mode}{The PLS mode used: "canonical", "regression", or "tsvdm".}
 \item{transform_y}{Whether the response was m-transformed.}
+\item{face_scaling}{How faces were compared: "frobenius" or "none".}
 \item{x_loadings}{Matrix of X loadings (p x ncomp), or loadings tensor
 if \code{mode = "tsvdm"} AND \code{matrix_output = FALSE}.}
 \item{y_loadings}{Matrix of Y loadings (q x ncomp), or loadings tensor

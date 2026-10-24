@@ -21,6 +21,7 @@ block_tplsda(
   max_iter = 100,
   solve_dual = TRUE,
   transform_y = multi_label,
+  face_scaling = NULL,
   bpparam = NULL
 )
 }
@@ -92,6 +93,10 @@ blocks. Defaults to \code{multi_label}: a single label per subject is not
 transformed, so every face of the blocks is compared with the labels
 themselves; labels repeated over time are transformed. See
 \code{\link{block_tpls}}.}
+
+\item{face_scaling}{How faces compete when each component picks one; see
+\code{\link{block_tpls}}. NULL by default: "frobenius" for a single label
+per subject, "none" for labels repeated over time.}
 
 \item{bpparam}{A \link[BiocParallel]{BiocParallelParam-class} object
 indicating the type of parallelisation. Does not have any effect if transform
