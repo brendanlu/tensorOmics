@@ -76,6 +76,23 @@
   ")
 }
 
+#' The class names, in the order of the indicator columns that
+#' .create_indicator_tensor() builds: the sorted levels of a single label, or
+#' the levels of labels repeated over time in order of appearance.
+#'
+#' @keywords internal
+#' @noRd
+.indicator_levels <- function(y, multi_label) {
+  if (multi_label) {
+    y_tens <- .y_to_tens(y)
+    return(unique(unlist(lapply(
+      seq_len(dim(y_tens)[3]),
+      function(i) levels(factor(y_tens[, , i]))
+    ))))
+  }
+  return(levels(factor(.y_to_vec(y))))
+}
+
 #' Preprocess a categorical "Y" inputs tensor for discriminant analysis. Returns
 #' in a tensor form.
 #'
@@ -143,7 +160,8 @@
 #'
 #' @inherit tpls return
 #' @return Adds \code{y_original}: the original labels input
-#' (vector/matrix/tensor) passed to \code{tplsda()}.
+#' (vector/matrix/tensor) passed to \code{tplsda()}; \code{multi_label}; and
+#' \code{levels}, the class names in the order of the indicator columns.
 #'
 #' @author Brendan Lu
 #' @export
@@ -184,6 +202,8 @@ tplsda <- function(
     bpparam = bpparam
   )
   output$y_original <- y_original_copy
+  output$multi_label <- multi_label
+  output$levels <- .indicator_levels(y_original_copy, multi_label)
   class(output) <- "tplsda"
   return(invisible(output))
 }

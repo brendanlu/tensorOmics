@@ -115,6 +115,14 @@
 #'   \item{x}{The centered input tensor.}
 #'   \item{loadings}{The loadings matrix or tensor.}
 #'   \item{variates}{The projected data in the reduced space.}
+#'   \item{center}{Whether x was centered.}
+#'   \item{mean_slice}{The mean horizontal slice subtracted from x (p x t), or
+#'   NULL if it was not centered.}
+#'   \item{m, minv}{The transform pair used.}
+#'   \item{matrix_output}{Whether the output is in matrix form.}
+#'   \item{features, faces}{The (column, face) index of each component in the
+#'   transformed singular value decomposition (only when
+#'   `matrix_output = TRUE`).}
 #' }
 #' @author Brendan Lu
 #' @export
@@ -144,6 +152,7 @@ tpca <- function(
   minv <- validated_transforms$minv
 
   # bltodo: add scaling as well?
+  mean_slice <- NULL
   if (center) {
     mean_slice <- apply(x, c(2, 3), mean)
     x <- sweep(x, c(2, 3), STATS = mean_slice, FUN = "-")
@@ -238,8 +247,16 @@ tpca <- function(
     ncomp = ncomp,
     x = x,
     loadings = loadings,
-    variates = x_projected # bltodo: maybe just adopt a different name here?
+    variates = x_projected, # bltodo: maybe just adopt a different name here?
     # bltodo theory: explained_variance = explained_variance_ratio[1:ncomp]
+    # what is needed to project new samples
+    center = center,
+    mean_slice = mean_slice,
+    m = m,
+    minv = minv,
+    matrix_output = matrix_output,
+    features = if (matrix_output) k_t_flatten_sort[1, ] else NULL,
+    faces = if (matrix_output) k_t_flatten_sort[2, ] else NULL
   )
   class(output) <- "tpca"
   return(invisible(output))

@@ -183,3 +183,51 @@ test_that(
     expect_equal(dim(tpca_obj$loadings), c(p, (n - 1) * t))
   }
 )
+
+test_that(
+  "tpca returns what is needed to project new samples",
+  code = {
+    n <- 15
+    p <- 20
+    t <- 4
+
+    set.seed(1)
+    test_x <- array(rnorm(n * p * t), dim = c(n, p, t))
+    # with 8 components both the columns and the faces vary
+    tpca_obj <- tpca(test_x, ncomp = 8)
+
+    expect_true(tpca_obj$center)
+    expect_equal(tpca_obj$mean_slice, apply(test_x, c(2, 3), mean))
+    # the transform pair, minv undoing m
+    expect_equal(tpca_obj$minv(tpca_obj$m(test_x)), test_x)
+    # each component's (column, face) index holds the next largest singular
+    # value of the transformed, centered data
+    singular_values <- tsvdm(
+      tpca_obj$m(sweep(test_x, c(2, 3), STATS = tpca_obj$mean_slice)),
+      transform = FALSE, svals_matrix_form = TRUE
+    )$s
+    expect_equal(
+      singular_values[cbind(tpca_obj$features, tpca_obj$faces)],
+      sort(singular_values, decreasing = TRUE)[1:8]
+    )
+
+    # from the raw data and the stored quantities alone, each variate is the
+    # transformed data on the component's face times its loading
+    xhat <- tpca_obj$m(
+      sweep(test_x, c(2, 3), STATS = tpca_obj$mean_slice, FUN = "-")
+    )
+    variates <- vapply(
+      seq_len(tpca_obj$ncomp),
+      function(h) {
+        as.numeric(
+          matrix(xhat[, , tpca_obj$faces[h]], nrow = n) %*%
+            tpca_obj$loadings[, h]
+        )
+      },
+      numeric(n)
+    )
+    expect_equal(variates, unname(tpca_obj$variates))
+
+    expect_null(tpca(test_x, ncomp = 8, center = FALSE)$mean_slice)
+  }
+)

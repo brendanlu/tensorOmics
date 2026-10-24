@@ -502,3 +502,103 @@ test_that(
     )
   }
 )
+
+test_that(
+  "tpls returns what is needed to project new samples",
+  code = {
+    n <- 15
+    p <- 20
+    # canonical mode deflates a subject-level y by its own variates, so it
+    # supports at most q components
+    q <- 5
+    t <- 4
+
+    set.seed(1)
+    test_x <- array(rnorm(n * p * t), dim = c(n, p, t))
+    test_y_tens <- array(rnorm(n * q * t), dim = c(n, q, t))
+    test_y_mat <- matrix(rnorm(n * q), n, q)
+
+    for (curr_mode in c("regression", "canonical")) {
+      for (test_y in list(test_y_tens, test_y_mat)) {
+        tpls_obj <- tpls(test_x, test_y, ncomp = 5, mode = curr_mode)
+        # components that share a face test the deflation coefficients, not
+        # just the loadings
+        expect_true(anyDuplicated(tpls_obj$faces) > 0)
+
+        expect_true(tpls_obj$center)
+        expect_equal(tpls_obj$mean_slice_x, apply(test_x, c(2, 3), mean))
+        # the transform pair, minv undoing m
+        expect_equal(tpls_obj$minv(tpls_obj$m(test_x)), test_x)
+        expect_equal(
+          tpls_obj$mean_slice_y,
+          if (is.matrix(test_y)) matrix(colMeans(test_y), q, t) else
+            apply(test_y, c(2, 3), mean)
+        )
+        expect_equal(dim(tpls_obj$x_reg_coefs), c(p, 5))
+        # in canonical mode Y is deflated by its own variates, so there are no
+        # coefficients that predict it from X
+        if (curr_mode == "regression") {
+          expect_equal(dim(tpls_obj$y_reg_coefs), c(q, 5))
+        } else {
+          expect_null(tpls_obj$y_reg_coefs)
+        }
+
+        # from the raw data and the stored quantities alone, the components of
+        # each face project with its rotation W (t(P) W)^-1
+        xhat <- tpls_obj$m(
+          sweep(test_x, c(2, 3), STATS = tpls_obj$mean_slice_x, FUN = "-")
+        )
+        x_projected <- matrix(0, n, tpls_obj$ncomp)
+        for (f in unique(tpls_obj$faces)) {
+          idx <- which(tpls_obj$faces == f)
+          w <- tpls_obj$x_loadings[, idx, drop = FALSE]
+          x_projected[, idx] <- matrix(xhat[, , f], nrow = n) %*%
+            w %*% solve(crossprod(tpls_obj$x_reg_coefs[, idx, drop = FALSE], w))
+        }
+        expect_equal(x_projected, unname(tpls_obj$x_projected))
+      }
+    }
+
+    tpls_tsvdm <- tpls(test_x, test_y_tens, ncomp = 2, mode = "tsvdm")
+    expect_null(tpls_tsvdm$x_reg_coefs)
+    expect_null(tpls_tsvdm$y_reg_coefs)
+  }
+)
+
+test_that(
+  "tpls deflation coefficients agree with mixOmics pls at a single time point",
+  code = {
+    n <- 12
+    p <- 8
+    q <- 3
+
+    set.seed(1)
+    test_x <- matrix(
+      rnorm(n * p), n, p,
+      dimnames = list(NULL, paste0("f", seq_len(p)))
+    )
+    test_y <- matrix(rnorm(n * q), n, q)
+
+    mixomics_pls <- mixOmics::pls(test_x, test_y, ncomp = 3, scale = FALSE)
+    mixomics_fitted <- predict(mixomics_pls, test_x)$predict[, , 3]
+
+    # the response transformed (as a tensor) and untransformed (as a matrix)
+    for (y_input in list(array(test_y, dim = c(n, q, 1)), test_y)) {
+      tpls_obj <- tpls(array(test_x, dim = c(n, p, 1)), y_input, ncomp = 3)
+
+      # the X coefficients change sign with the component
+      signs <- sign(colSums(tpls_obj$x_loadings * mixomics_pls$loadings$X))
+      expect_equal(
+        unname(sweep(tpls_obj$x_reg_coefs, 2, signs, "*")),
+        unname(mixomics_pls$mat.c)
+      )
+
+      # the fitted response, from the variates and the Y coefficients
+      fitted <- sweep(
+        tcrossprod(tpls_obj$x_projected, tpls_obj$y_reg_coefs),
+        2, STATS = tpls_obj$mean_slice_y[, 1], FUN = "+"
+      )
+      expect_equal(unname(fitted), unname(mixomics_fitted))
+    }
+  }
+)

@@ -53,7 +53,8 @@ functions explicitly set using \code{m}, \code{minv}.}
 }
 \value{
 Adds \code{y_original}: the original labels input
-(vector/matrix/tensor) passed to \code{tplsda()}.
+(vector/matrix/tensor) passed to \code{tplsda()}; \code{multi_label}; and
+\code{levels}, the class names in the order of the indicator columns.
 }
 \description{
 Note: always returns a compressed-matrix form output.

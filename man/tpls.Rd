@@ -91,6 +91,15 @@ tensor when \code{mode = "tsvdm"} AND \code{matrix_output = FALSE}.}
 when \code{matrix_output = TRUE}).}
 \item{faces}{Vector of selected tensor face indices per component (only
 when \code{matrix_output = TRUE}).}
+\item{center}{Whether x and y were centered.}
+\item{mean_slice_x, mean_slice_y}{The mean horizontal slices subtracted
+from x (p x t) and y (q x t), or NULL if they were not centered.}
+\item{m, minv}{The transform pair used.}
+\item{x_reg_coefs}{The X deflation coefficients of each component
+(p x ncomp), NULL in tsvdm mode.}
+\item{y_reg_coefs}{In regression mode, the coefficients of Y on the X
+variates of each component (q x ncomp), which deflate Y; NULL in canonical
+and tsvdm modes.}
 }
 }
 \description{
