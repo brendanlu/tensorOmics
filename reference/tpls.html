@@ -71,6 +71,8 @@ points) top singular value, and deflating just that relevant face.</p>
 <span>  mode <span class="op">=</span> <span class="st">"regression"</span>,</span>
 <span>  center <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  matrix_output <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  transform_y <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  face_scaling <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  bpparam <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -84,7 +86,8 @@ points) top singular value, and deflating just that relevant face.</p>
 
 
 <dt id="arg-y">y<a class="anchor" aria-label="anchor" href="#arg-y"></a></dt>
-<dd><p>Tensor input.</p></dd>
+<dd><p>Tensor input, or a vector / n x q matrix for a response fixed per
+subject (see <code>transform_y</code>).</p></dd>
 
 
 <dt id="arg-ncomp">ncomp<a class="anchor" aria-label="anchor" href="#arg-ncomp"></a></dt>
@@ -121,6 +124,30 @@ them into the columns of a matrix. Corresponds to the 'matrix compression'
 type of scheme described in Mor et al. 2022.</p></dd>
 
 
+<dt id="arg-transform-y">transform_y<a class="anchor" aria-label="anchor" href="#arg-transform-y"></a></dt>
+<dd><p>Whether to m-transform the response with x. NULL by
+default, which decides from the shape of y: a vector or an n x q matrix is a
+response fixed per subject, such as an endpoint measured once, and is not
+transformed, so that every face of x is compared with the response itself;
+an order-3 tensor is transformed. A response that is constant over time and
+transformed is non-zero on the first face only, which under the default DCT
+holds the subject time averages. An untransformed response is deflated on
+every face after each component. TRUE copies a subject-fixed response over
+time and transforms it; FALSE needs a response that is the same at every
+time point.</p></dd>
+
+
+<dt id="arg-face-scaling">face_scaling<a class="anchor" aria-label="anchor" href="#arg-face-scaling"></a></dt>
+<dd><p>How faces compete when each component picks one.
+"frobenius" divides each face's score, the largest singular value of
+t(xhat_f) yhat_f, by the Frobenius norms of xhat_f and yhat_f, so that faces
+compete on a common scale. "none" compares the raw scores, which favours the
+face with most variance; under the default DCT that is face 1, which also
+holds the between-subject variation. It affects which face is chosen only.
+NULL by default: "frobenius" for an untransformed response, "none"
+otherwise.</p></dd>
+
+
 <dt id="arg-bpparam">bpparam<a class="anchor" aria-label="anchor" href="#arg-bpparam"></a></dt>
 <dd><p>A <a href="https://rdrr.io/pkg/BiocParallel/man/BiocParallelParam-class.html" class="external-link">BiocParallelParam-class</a> object
 indicating the type of parallelisation. Does not have any effect if transform
@@ -140,6 +167,12 @@ functions explicitly set using <code>m</code>, <code>minv</code>.</p></dd>
 
 <dt>mode</dt>
 <dd><p>The PLS mode used: "canonical", "regression", or "tsvdm".</p></dd>
+
+<dt>transform_y</dt>
+<dd><p>Whether the response was m-transformed.</p></dd>
+
+<dt>face_scaling</dt>
+<dd><p>How faces were compared: "frobenius" or "none".</p></dd>
 
 <dt>x_loadings</dt>
 <dd><p>Matrix of X loadings (p x ncomp), or loadings tensor
@@ -164,6 +197,25 @@ when <code>matrix_output = TRUE</code>).</p></dd>
 <dt>faces</dt>
 <dd><p>Vector of selected tensor face indices per component (only
 when <code>matrix_output = TRUE</code>).</p></dd>
+
+<dt>center</dt>
+<dd><p>Whether x and y were centered.</p></dd>
+
+<dt>mean_slice_x, mean_slice_y</dt>
+<dd><p>The mean horizontal slices subtracted
+from x (p x t) and y (q x t), or NULL if they were not centered.</p></dd>
+
+<dt>m, minv</dt>
+<dd><p>The transform pair used.</p></dd>
+
+<dt>x_reg_coefs</dt>
+<dd><p>The X deflation coefficients of each component
+(p x ncomp), NULL in tsvdm mode.</p></dd>
+
+<dt>y_reg_coefs</dt>
+<dd><p>In regression mode, the coefficients of Y on the X
+variates of each component (q x ncomp), which deflate Y; NULL in canonical
+and tsvdm modes.</p></dd>
 
 
 </dl></div>

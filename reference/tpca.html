@@ -123,6 +123,24 @@ functions explicitly set using <code>m</code>, <code>minv</code>.</p></dd>
 <dt>variates</dt>
 <dd><p>The projected data in the reduced space.</p></dd>
 
+<dt>center</dt>
+<dd><p>Whether x was centered.</p></dd>
+
+<dt>mean_slice</dt>
+<dd><p>The mean horizontal slice subtracted from x (p x t), or
+NULL if it was not centered.</p></dd>
+
+<dt>m, minv</dt>
+<dd><p>The transform pair used.</p></dd>
+
+<dt>matrix_output</dt>
+<dd><p>Whether the output is in matrix form.</p></dd>
+
+<dt>features, faces</dt>
+<dd><p>The (column, face) index of each component in the
+transformed singular value decomposition (only when
+<code>matrix_output = TRUE</code>).</p></dd>
+
 
 </dl></div>
     <div id="author">

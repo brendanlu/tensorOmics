@@ -59,7 +59,7 @@
 <span>  <span class="va">y</span>,</span>
 <span>  multi_label <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  ncomp <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  design <span class="op">=</span> <span class="st">"full"</span>,</span>
+<span>  <span class="va">design</span>,</span>
 <span>  scheme <span class="op">=</span> <span class="st">"horst"</span>,</span>
 <span>  tau <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  m <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -70,6 +70,8 @@
 <span>  tol <span class="op">=</span> <span class="fl">1e-06</span>,</span>
 <span>  max_iter <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>  solve_dual <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  transform_y <span class="op">=</span> <span class="va">multi_label</span>,</span>
+<span>  face_scaling <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  bpparam <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -108,7 +110,8 @@ connected to the target block at strength 1, but not to each other), or
 "full" for a fully connected design (target and feature blocks are all
 connected to each other equally at strength 1), or a single scalar value
 between 0 and 1 which will designate the relationship between feature blocks,
-with the relationships to the target block being 1. "full" by default.</p></dd>
+with the relationships to the target block being 1. design must be
+explicitly set.</p></dd>
 
 
 <dt id="arg-scheme">scheme<a class="anchor" aria-label="anchor" href="#arg-scheme"></a></dt>
@@ -169,6 +172,20 @@ of the raw data. TRUE by default, only recommended to set to FALSE for
 testing purposes.</p></dd>
 
 
+<dt id="arg-transform-y">transform_y<a class="anchor" aria-label="anchor" href="#arg-transform-y"></a></dt>
+<dd><p>Whether to m-transform the class indicators with the
+blocks. Defaults to <code>multi_label</code>: a single label per subject is not
+transformed, so every face of the blocks is compared with the labels
+themselves; labels repeated over time are transformed. See
+<code><a href="block_tpls.html">block_tpls</a></code>.</p></dd>
+
+
+<dt id="arg-face-scaling">face_scaling<a class="anchor" aria-label="anchor" href="#arg-face-scaling"></a></dt>
+<dd><p>How faces compete when each component picks one; see
+<code><a href="block_tpls.html">block_tpls</a></code>. NULL by default: "frobenius" for a single label
+per subject, "none" for labels repeated over time.</p></dd>
+
+
 <dt id="arg-bpparam">bpparam<a class="anchor" aria-label="anchor" href="#arg-bpparam"></a></dt>
 <dd><p>A <a href="https://rdrr.io/pkg/BiocParallel/man/BiocParallelParam-class.html" class="external-link">BiocParallelParam-class</a> object
 indicating the type of parallelisation. Does not have any effect if transform
@@ -178,7 +195,8 @@ functions explicitly set using <code>m</code>, <code>minv</code>.</p></dd>
     <div id="value">
     <h2>Value</h2>
     <p>Adds <code>y_original</code>: the original labels input
-(vector/matrix/tensor) passed to <code>block_tplsda()</code>.</p>
+(vector/matrix/tensor) passed to <code>block_tplsda()</code>; <code>multi_label</code>;
+and <code>levels</code>, the class names in the order of the indicator columns.</p>
     </div>
     <div id="note">
     <h2>Note</h2>

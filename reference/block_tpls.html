@@ -58,7 +58,7 @@
 <span>  <span class="va">a</span>,</span>
 <span>  <span class="va">y_ind</span>,</span>
 <span>  ncomp <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  design <span class="op">=</span> <span class="st">"full"</span>,</span>
+<span>  <span class="va">design</span>,</span>
 <span>  scheme <span class="op">=</span> <span class="st">"horst"</span>,</span>
 <span>  tau <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  m <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -69,6 +69,8 @@
 <span>  tol <span class="op">=</span> <span class="fl">1e-06</span>,</span>
 <span>  max_iter <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>  solve_dual <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  transform_y <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  face_scaling <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  bpparam <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -79,7 +81,8 @@
 
 <dl><dt id="arg-a">a<a class="anchor" aria-label="anchor" href="#arg-a"></a></dt>
 <dd><p>A list of tensor inputs (termed 'blocks') measured on the same
-samples.</p></dd>
+samples. The target block may instead be a vector or an n x q matrix, for a
+response fixed per subject (see <code>transform_y</code>).</p></dd>
 
 
 <dt id="arg-y-ind">y_ind<a class="anchor" aria-label="anchor" href="#arg-y-ind"></a></dt>
@@ -101,7 +104,8 @@ connected to the target block at strength 1, but not to each other), or
 "full" for a fully connected design (target and feature blocks are all
 connected to each other equally at strength 1), or a single scalar value
 between 0 and 1 which will designate the relationship between feature blocks,
-with the relationships to the target block being 1. "full" by default.</p></dd>
+with the relationships to the target block being 1. design must be
+explicitly set.</p></dd>
 
 
 <dt id="arg-scheme">scheme<a class="anchor" aria-label="anchor" href="#arg-scheme"></a></dt>
@@ -162,6 +166,26 @@ of the raw data. TRUE by default, only recommended to set to FALSE for
 testing purposes.</p></dd>
 
 
+<dt id="arg-transform-y">transform_y<a class="anchor" aria-label="anchor" href="#arg-transform-y"></a></dt>
+<dd><p>Whether to m-transform the target block with the other
+blocks. NULL by default, which decides from its shape: a vector or an n x q
+matrix is a response fixed per subject and is not transformed, so that every
+face of the other blocks is compared with the response itself; an order-3
+tensor is transformed. An untransformed target block is deflated on every
+face after each component. TRUE copies a subject-fixed response over time and
+transforms it; FALSE needs a target block that is the same at every time
+point. See <code><a href="tpls.html">tpls</a></code>.</p></dd>
+
+
+<dt id="arg-face-scaling">face_scaling<a class="anchor" aria-label="anchor" href="#arg-face-scaling"></a></dt>
+<dd><p>How faces compete when each component picks one.
+"frobenius" divides each face's score by the combined Frobenius norm of the
+other blocks on that face, times that of the target block, so that faces
+compete on a common scale; "none" compares the raw scores. It affects which
+face is chosen only. NULL by default: "frobenius" for an untransformed
+target block, "none" otherwise. See <code><a href="tpls.html">tpls</a></code>.</p></dd>
+
+
 <dt id="arg-bpparam">bpparam<a class="anchor" aria-label="anchor" href="#arg-bpparam"></a></dt>
 <dd><p>A <a href="https://rdrr.io/pkg/BiocParallel/man/BiocParallelParam-class.html" class="external-link">BiocParallelParam-class</a> object
 indicating the type of parallelisation. Does not have any effect if transform
@@ -188,6 +212,12 @@ functions explicitly set using <code>m</code>, <code>minv</code>.</p></dd>
 <dt>mode</dt>
 <dd><p>The PLS mode used ("canonical" or "regression").</p></dd>
 
+<dt>transform_y</dt>
+<dd><p>Whether the target block was m-transformed.</p></dd>
+
+<dt>face_scaling</dt>
+<dd><p>How faces were compared: "frobenius" or "none".</p></dd>
+
 <dt>pairwise_scoring</dt>
 <dd><p>The pairwise_scoring method used.</p></dd>
 
@@ -202,6 +232,25 @@ functions explicitly set using <code>m</code>, <code>minv</code>.</p></dd>
 
 <dt>faces</dt>
 <dd><p>Vector of selected tensor face indices per component.</p></dd>
+
+<dt>center</dt>
+<dd><p>Whether the blocks were centered.</p></dd>
+
+<dt>mean_slices</dt>
+<dd><p>List of the mean horizontal slices subtracted from each
+block, or NULL if they were not centered.</p></dd>
+
+<dt>m, minv</dt>
+<dd><p>The transform pair used.</p></dd>
+
+<dt>x_reg_coefs</dt>
+<dd><p>List of each X block's deflation coefficients
+(p_i x ncomp), NULL for the target block.</p></dd>
+
+<dt>y_reg_coefs</dt>
+<dd><p>In regression mode, list of the target block's
+coefficients on each X block's projection (q x ncomp), NULL for the target
+block; NULL in canonical mode.</p></dd>
 
 
 </dl></div>
