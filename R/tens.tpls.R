@@ -90,6 +90,34 @@
   ))
 }
 
+#' Lay a response with no time dimension (a vector or an n x q matrix), which
+#' is fixed per subject, out over t time points as a tensor constant in time.
+#'
+#' @keywords internal
+#' @noRd
+.subject_level_to_tensor <- function(y, t) {
+  y_mat <- as.matrix(y)
+  y_dimnames <- dimnames(y_mat)
+  if (!is.null(y_dimnames)) {
+    y_dimnames <- c(y_dimnames, list(NULL))
+  }
+  return(array(y_mat, dim = c(dim(y_mat), t), dimnames = y_dimnames))
+}
+
+#' Stop if a response that is to be left untransformed changes over time: only
+#' a response fixed per subject has a single matrix to meet every face.
+#'
+#' @keywords internal
+#' @noRd
+.stop_time_varying_untransformed <- function(y) {
+  if (any(y != as.vector(y[, , 1, drop = FALSE]))) {
+    stop(paste(
+      "transform_y = FALSE needs a response that is fixed per subject: a",
+      "vector, an n x q matrix, or a tensor that is the same at every time point"
+    ))
+  }
+}
+
 #' Check integer ncomp inputs. Used for tensor PLS-like analyses. Depends on a
 #' sensible calculation of max_rank which is left to the calling state.
 #'
@@ -119,7 +147,8 @@
 #' points) top singular value, and deflating just that relevant face.
 #'
 #' @param x Tensor input.
-#' @param y Tensor input.
+#' @param y Tensor input, or a vector / n x q matrix for a response fixed per
+#' subject (see `transform_y`).
 #' @param ncomp The estimated number of components. ncomp must be explicitly set
 #' as an integer in tpls.
 #' @param m A function which applies an orthogonal tensor tubal transform.
@@ -136,6 +165,16 @@
 #' organized by the magnitude of the corresponding singular vector, and place
 #' them into the columns of a matrix. Corresponds to the 'matrix compression'
 #' type of scheme described in Mor et al. 2022.
+#' @param transform_y Whether to m-transform the response with x. NULL by
+#' default, which decides from the shape of y: a vector or an n x q matrix is a
+#' response fixed per subject, such as an endpoint measured once, and is not
+#' transformed, so that every face of x is compared with the response itself;
+#' an order-3 tensor is transformed. A response that is constant over time and
+#' transformed is non-zero on the first face only, which under the default DCT
+#' holds the subject time averages. An untransformed response is deflated on
+#' every face after each component. TRUE copies a subject-fixed response over
+#' time and transforms it; FALSE needs a response that is the same at every
+#' time point.
 #' @param bpparam A \link[BiocParallel]{BiocParallelParam-class} object
 #' indicating the type of parallelisation. Does not have any effect if transform
 #' functions explicitly set using \code{m}, \code{minv}.
@@ -145,6 +184,7 @@
 #'   \item{x}{The centered input tensor X.}
 #'   \item{y}{The centered input tensor Y.}
 #'   \item{mode}{The PLS mode used: "canonical", "regression", or "tsvdm".}
+#'   \item{transform_y}{Whether the response was m-transformed.}
 #'   \item{x_loadings}{Matrix of X loadings (p x ncomp), or loadings tensor
 #'   if `mode = "tsvdm"` AND `matrix_output = FALSE`.}
 #'   \item{y_loadings}{Matrix of Y loadings (q x ncomp), or loadings tensor
@@ -169,6 +209,7 @@ tpls <- function(
   mode = "regression",
   center = TRUE,
   matrix_output = TRUE, # FALSE only takes effect for tsvdm method
+  transform_y = NULL,
   bpparam = NULL
 ) {
   # BLTODO: add option to minv back into original space...? currently it does
@@ -184,7 +225,20 @@ tpls <- function(
     ))
   }
 
+  # a response with no time dimension is fixed per subject, and is not
+  # transformed unless asked; lay it out over the time points of x
+  subject_level_y <- length(dim(y)) < 3
+  if (is.null(transform_y)) {
+    transform_y <- !subject_level_y
+  }
+  if (subject_level_y && length(dim(x)) == 3) {
+    y <- .subject_level_to_tensor(y, dim(x)[3])
+  }
+
   dims <- .validate_tpls_x_y_dim(x, y)
+  if (!transform_y) {
+    .stop_time_varying_untransformed(y)
+  }
   n <- dims$n
   p <- dims$p
   q <- dims$q
@@ -217,7 +271,9 @@ tpls <- function(
   # project x and y into 'hat-space', expensive computation so do it once and
   # save into variable
   xhat <- m(x)
-  yhat <- m(y)
+  # an untransformed response stays as it is, so every face of xhat meets the
+  # response itself
+  yhat <- if (transform_y) m(y) else y
 
   # store the columns and faces of the top singular vector in each component
   # iteration
@@ -374,6 +430,12 @@ tpls <- function(
         yhat[, , k_t_top[2]] <- yhat[, , k_t_top[2]] -
           tcrossprod(curr_x_projected, curr_y_reg_coef)
       }
+
+      # an untransformed response is one matrix shared by every face, so it is
+      # deflated on every face
+      if (!transform_y) {
+        yhat <- array(yhat[, , k_t_top[2]], dim = dim(yhat))
+      }
       # ------------------------------------------------------------------------
 
       x_loadings[, i] <- curr_x_loadings
@@ -423,6 +485,7 @@ tpls <- function(
     x = x,
     y = y,
     mode = mode,
+    transform_y = transform_y,
     x_loadings = x_loadings,
     y_loadings = y_loadings,
     x_projected = x_projected,

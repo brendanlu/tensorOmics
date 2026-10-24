@@ -12,6 +12,7 @@ tplsda(
   m = NULL,
   minv = NULL,
   center = TRUE,
+  transform_y = multi_label,
   bpparam = NULL
 )
 }
@@ -35,6 +36,11 @@ as an integer in tpls.}
 Mean Deviation Form (see Mor et al. 2022). By default, the mean horizontal
 slice of the input tensor(s) are subtracted, so that all of the horizontal
 slices sum to 0, analgous to centering matrix data.}
+
+\item{transform_y}{Whether to m-transform the class indicators with x.
+Defaults to \code{multi_label}: a single label per subject is not transformed, so
+every face of x is compared with the labels themselves; labels repeated over
+time are transformed. See \code{\link{tpls}}.}
 
 \item{bpparam}{A \link[BiocParallel]{BiocParallelParam-class} object
 indicating the type of parallelisation. Does not have any effect if transform

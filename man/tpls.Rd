@@ -13,13 +13,15 @@ tpls(
   mode = "regression",
   center = TRUE,
   matrix_output = TRUE,
+  transform_y = NULL,
   bpparam = NULL
 )
 }
 \arguments{
 \item{x}{Tensor input.}
 
-\item{y}{Tensor input.}
+\item{y}{Tensor input, or a vector / n x q matrix for a response fixed per
+subject (see \code{transform_y}).}
 
 \item{ncomp}{The estimated number of components. ncomp must be explicitly set
 as an integer in tpls.}
@@ -43,6 +45,17 @@ organized by the magnitude of the corresponding singular vector, and place
 them into the columns of a matrix. Corresponds to the 'matrix compression'
 type of scheme described in Mor et al. 2022.}
 
+\item{transform_y}{Whether to m-transform the response with x. NULL by
+default, which decides from the shape of y: a vector or an n x q matrix is a
+response fixed per subject, such as an endpoint measured once, and is not
+transformed, so that every face of x is compared with the response itself;
+an order-3 tensor is transformed. A response that is constant over time and
+transformed is non-zero on the first face only, which under the default DCT
+holds the subject time averages. An untransformed response is deflated on
+every face after each component. TRUE copies a subject-fixed response over
+time and transforms it; FALSE needs a response that is the same at every
+time point.}
+
 \item{bpparam}{A \link[BiocParallel]{BiocParallelParam-class} object
 indicating the type of parallelisation. Does not have any effect if transform
 functions explicitly set using \code{m}, \code{minv}.}
@@ -54,6 +67,7 @@ A list containing:
 \item{x}{The centered input tensor X.}
 \item{y}{The centered input tensor Y.}
 \item{mode}{The PLS mode used: "canonical", "regression", or "tsvdm".}
+\item{transform_y}{Whether the response was m-transformed.}
 \item{x_loadings}{Matrix of X loadings (p x ncomp), or loadings tensor
 if \code{mode = "tsvdm"} AND \code{matrix_output = FALSE}.}
 \item{y_loadings}{Matrix of Y loadings (q x ncomp), or loadings tensor

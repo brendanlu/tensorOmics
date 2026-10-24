@@ -133,6 +133,10 @@
 #' n x t matrix / n x 1 x t tensor if `multi_label == TRUE`.
 #' @param multi_label Set to `TRUE` if y contains repeated class measurements
 #' across the t timepoints specified in the x tensor.
+#' @param transform_y Whether to m-transform the class indicators with x.
+#' Defaults to `multi_label`: a single label per subject is not transformed, so
+#' every face of x is compared with the labels themselves; labels repeated over
+#' time are transformed. See \code{\link{tpls}}.
 #'
 #' @inherit tpls return
 #' @return Adds \code{y_original}: the original labels input
@@ -148,6 +152,7 @@ tplsda <- function(
   m = NULL,
   minv = NULL,
   center = TRUE,
+  transform_y = multi_label,
   bpparam = NULL
 ) {
   # most parameter checking is done in tpls call, only the checks that are
@@ -170,6 +175,7 @@ tplsda <- function(
     minv = minv,
     mode = "regression",
     center = center,
+    transform_y = transform_y,
     bpparam = bpparam
   )
   output$y_original <- y_original_copy

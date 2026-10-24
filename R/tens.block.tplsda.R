@@ -35,6 +35,11 @@
 #' n x t matrix / n x 1 x t tensor if `multi_label == TRUE`.
 #' @param multi_label Set to TRUE if y contains repeated class measurements
 #' across the t timepoints specified in the x tensor.
+#' @param transform_y Whether to m-transform the class indicators with the
+#' blocks. Defaults to `multi_label`: a single label per subject is not
+#' transformed, so every face of the blocks is compared with the labels
+#' themselves; labels repeated over time are transformed. See
+#' \code{\link{block_tpls}}.
 #'
 #' @inherit block_tpls return
 #' @return Adds \code{y_original}: the original labels input
@@ -57,6 +62,7 @@ block_tplsda <- function(
   tol = 1e-06,
   max_iter = 100,
   solve_dual = TRUE,
+  transform_y = multi_label,
   bpparam = NULL
 ) {
   # just get a provisional value for t here, proper parameter checking is done
@@ -113,6 +119,7 @@ block_tplsda <- function(
     tol = tol,
     max_iter = max_iter,
     solve_dual = solve_dual,
+    transform_y = transform_y,
     bpparam = bpparam
   )
   output$y_original <- y_original_copy

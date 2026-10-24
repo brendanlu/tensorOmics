@@ -164,3 +164,32 @@ test_that(
     )
   }
 )
+
+test_that(
+  "tplsda compares every face with a single label per subject",
+  code = {
+    n <- 20
+    p <- 10
+    t <- 4
+
+    set.seed(1)
+    # features 1 to 5 rise over time in group "a" and fall in group "b": the
+    # same mean, a different shape
+    test_y <- rep(c("a", "b"), each = n / 2)
+    test_x <- array(rnorm(n * p * t), dim = c(n, p, t))
+    for (j in 1:5) {
+      test_x[, j, ] <- test_x[, j, ] +
+        outer(ifelse(test_y == "a", 1, -1), c(-1.5, -0.5, 0.5, 1.5))
+    }
+
+    # a transformed label is non-zero on face 1 only, the time averages
+    expect_equal(
+      as.vector(tplsda(test_x, test_y, ncomp = 2, transform_y = TRUE)$faces),
+      c(1, 1)
+    )
+
+    tplsda_obj <- tplsda(test_x, test_y, ncomp = 2)
+    expect_false(tplsda_obj$transform_y)
+    expect_true(tplsda_obj$faces[1] != 1)
+  }
+)
