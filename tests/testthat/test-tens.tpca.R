@@ -133,3 +133,28 @@ test_that(
     )
   }
 )
+
+test_that(
+  "tpca agrees with mixOmics pca when there are more samples than features",
+  code = {
+    n <- 10
+    p <- 3
+    t <- 1
+    ncomp_input <- 2
+
+    set.seed(1)
+    test_x <- array(rnorm(n * p * t, mean = 0, sd = 5), dim = c(n, p, t))
+
+    mixomics_pca <- mixOmics::pca(test_x[, , 1], ncomp = ncomp_input)
+    tensor_pca <- tpca(test_x, ncomp = ncomp_input)
+
+    expect_equal(
+      .make_signs_consistent(mixomics_pca$loadings$X),
+      .make_signs_consistent(tensor_pca$loadings)
+    )
+    expect_equal(
+      .make_signs_consistent(mixomics_pca$variates$X),
+      .make_signs_consistent(tensor_pca$variates)
+    )
+  }
+)
