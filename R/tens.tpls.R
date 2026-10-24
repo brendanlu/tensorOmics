@@ -29,7 +29,7 @@
   # bltodo: if ultimately only use once just place it in function body directly
   return(
     .unravel_index(
-      order(as.vector(s_mat))[1:ncomp],
+      order(as.vector(s_mat), decreasing = TRUE)[1:ncomp],
       dim(s_mat)
     )
   )

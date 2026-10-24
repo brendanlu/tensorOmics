@@ -326,3 +326,39 @@ test_that(
     )
   }
 )
+
+test_that(
+  "tsvdm-tpls matrix output keeps the largest singular values",
+  code = {
+    n <- 6
+    p <- 5
+    q <- 4
+    t <- 3
+    ncomp <- 3
+
+    set.seed(1)
+    test_x <- array(rnorm(n * p * t, mean = 0, sd = 5), dim = c(n, p, t))
+    test_y <- array(rnorm(n * q * t, mean = 0, sd = 3), dim = c(n, q, t))
+
+    transforms <- dctii_m_transforms(t)
+    m <- transforms$m
+
+    # center = FALSE so the singular values can be recomputed directly
+    tpls_tsvdm <- tpls(
+      test_x, test_y,
+      ncomp = ncomp,
+      mode = "tsvdm",
+      center = FALSE
+    )
+
+    svals <- tsvdm(
+      ft(m(test_x)) %fp% m(test_y),
+      transform = FALSE,
+      svals_matrix_form = TRUE
+    )$s
+    expect_equal(
+      svals[cbind(tpls_tsvdm$features, tpls_tsvdm$faces)],
+      sort(svals, decreasing = TRUE)[1:ncomp]
+    )
+  }
+)
