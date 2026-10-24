@@ -8,7 +8,7 @@ block_tpls(
   a,
   y_ind,
   ncomp = 1,
-  design = "full",
+  design,
   scheme = "horst",
   tau = 1,
   m = NULL,
@@ -40,7 +40,8 @@ connected to the target block at strength 1, but not to each other), or
 "full" for a fully connected design (target and feature blocks are all
 connected to each other equally at strength 1), or a single scalar value
 between 0 and 1 which will designate the relationship between feature blocks,
-with the relationships to the target block being 1. "full" by default.}
+with the relationships to the target block being 1. design must be
+explicitly set.}
 
 \item{scheme}{One of "horst", "factorial" or "centroid", "horst" by default.}
 

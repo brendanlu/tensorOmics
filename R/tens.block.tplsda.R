@@ -46,7 +46,7 @@ block_tplsda <- function(
   y,
   multi_label = FALSE,
   ncomp = 1,
-  design = "full",
+  design,
   scheme = "horst",
   tau = 1,
   m = NULL,
@@ -65,6 +65,11 @@ block_tplsda <- function(
     stop("Please ensure all blocks are order-3 arrays")
   } else {
     t <- dim(x[[1]])[3]
+  }
+
+  # design is used below, before block_tpls could check it
+  if (missing(design)) {
+    .stop_missing_design()
   }
 
   # make a copy of the original y

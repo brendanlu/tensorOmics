@@ -459,6 +459,18 @@
   ))
 }
 
+#' Stop when block_tpls or block_tplsda is called without a design, which
+#' must be explicitly set.
+#'
+#' @keywords internal
+#' @noRd
+.stop_missing_design <- function() {
+  stop(paste(
+    "design must be explicitly set: \"null\", \"full\", a number between 0",
+    "and 1, or a design matrix (see ?block_tpls)."
+  ), call. = FALSE)
+}
+
 #' Check the design matrix input ensuring it is valid, or parse keyword inputs.
 #' See .create_design() in utils.R for reference. Rewriting this new function
 #' was easier than refactoring that one to work well in block_tpls.
@@ -552,7 +564,8 @@
 #' "full" for a fully connected design (target and feature blocks are all
 #' connected to each other equally at strength 1), or a single scalar value
 #' between 0 and 1 which will designate the relationship between feature blocks,
-#' with the relationships to the target block being 1. "full" by default.
+#' with the relationships to the target block being 1. design must be
+#' explicitly set.
 #' @param scheme One of "horst", "factorial" or "centroid", "horst" by default.
 #' @param tau Shrinkage constant to provide better estimate of covariance,
 #' introduced by Ledoit and Wolf (2004). NULL by default, but can set to
@@ -608,7 +621,7 @@ block_tpls <- function(
   a,
   y_ind,
   ncomp = 1,
-  design = "full",
+  design,
   scheme = "horst",
   tau = 1,
   m = NULL,
@@ -653,6 +666,9 @@ block_tpls <- function(
   minv <- validated_transforms$minv
 
   # check / parse the design input
+  if (missing(design)) {
+    .stop_missing_design()
+  }
   validated_design <- .stop_invalid_design_input(design, nblocks, y_ind)
 
   # bltodo: `facewise_scoring` parameter needs a better docstring and probably
