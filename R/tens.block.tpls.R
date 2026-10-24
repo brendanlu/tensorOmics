@@ -714,17 +714,18 @@ block_tpls <- function(
     #
     # so, the outer lapply obtains 'scores' for each face across t's
     # the function basically computes, for each t ("tt"):
-    # a "weighted" pairwise_scores matrix = design %*% t(pairwise_scores),
+    # a "weighted" pairwise_scores matrix = design * t(pairwise_scores),
     # where pairwise_scores is a matrix such that element i,j contains the
     # pairwise score between matrices a[[i]][, , tt] and a[[j]][, , tt], and
-    # pre-multiplying effectively weights these values according to design
+    # the element-wise product weights each pair by its own design entry
+    # (a matrix product would weight it by a column sum of design instead)
     #
     # it then computes a single score by taking the total sum of all elements in
     # the "weighted" (by design) pairwise_scores matrix
     facewise_scores <- lapply(seq_len(t),
       function(tt) {
         sum(
-          validated_design %*% t(
+          validated_design * t(
             matrix(
               # the conversion to matrix works perfectly with the output from
               # block_combination_idxs as it's filled in column major order

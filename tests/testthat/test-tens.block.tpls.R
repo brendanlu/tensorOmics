@@ -266,3 +266,32 @@ test_that(
     }
   }
 )
+
+test_that(
+  "block_tpls face selection weights each pair of blocks by its design entry",
+  code = {
+    n <- 20
+    t <- 4
+    ncomp_input <- 2
+
+    set.seed(1)
+    # the two x blocks share a pattern that alternates over time, so their
+    # pairwise score is large on a face other than the first; y is the same at
+    # every time point, so after the transform it is non-zero on face 1 only
+    shared <- outer(matrix(rnorm(n * 6), n, 6), 10 * c(1, -1, 1, -1))
+    test_a <- list(
+      shared + array(rnorm(n * 6 * t), dim = c(n, 6, t)),
+      shared + array(rnorm(n * 6 * t), dim = c(n, 6, t)),
+      array(rep(rnorm(n * 2), t), dim = c(n, 2, t))
+    )
+
+    # with design = "null" the x-x pair carries no weight, so only face 1,
+    # where y is non-zero, can be selected
+    block_tpls_obj <- block_tpls(
+      test_a, 3,
+      ncomp = ncomp_input,
+      design = "null"
+    )
+    expect_equal(as.vector(block_tpls_obj$faces), rep(1, ncomp_input))
+  }
+)
