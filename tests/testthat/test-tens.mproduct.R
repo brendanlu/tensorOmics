@@ -78,6 +78,39 @@ test_that(
 )
 
 test_that(
+  "facewise product handles faces with a single row or column",
+  code = {
+    t <- 3
+    set.seed(1)
+    # `[` drops these faces to vectors: n x 1 by 1 x 1 used to error, n x 1 by
+    # 1 x n (an outer product) used to return the inner product, and 1 x p by
+    # p x 1 gives 1 x 1 faces, which the BiocParallel branch used to flatten
+    for (dims in list(
+      list(c(4, 1), c(1, 1)), list(c(4, 1), c(1, 4)), list(c(1, 4), c(4, 1))
+    )) {
+      test_tensor1 <- array(rnorm(prod(dims[[1]]) * t), dim = c(dims[[1]], t))
+      test_tensor2 <- array(rnorm(prod(dims[[2]]) * t), dim = c(dims[[2]], t))
+      expected_result <- array(0, dim = c(dims[[1]][1], dims[[2]][2], t))
+      for (i in 1:t) {
+        expected_result[, , i] <-
+          matrix(test_tensor1[, , i], dims[[1]][1], dims[[1]][2]) %*%
+          matrix(test_tensor2[, , i], dims[[2]][1], dims[[2]][2])
+      }
+      expect_equal(test_tensor1 %fp% test_tensor2, expected_result)
+      expect_equal(
+        suppressWarnings(
+          facewise_product(
+            test_tensor1, test_tensor2,
+            bpparam = BiocParallel::MulticoreParam()
+          )
+        ),
+        expected_result
+      )
+    }
+  }
+)
+
+test_that(
   "facewise product resolves names correctly, and propogates them",
   code = {
     n <- 3

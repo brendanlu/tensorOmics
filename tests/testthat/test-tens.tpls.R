@@ -362,3 +362,24 @@ test_that(
     )
   }
 )
+
+test_that(
+  "tpls accepts a single-column response",
+  code = {
+    n <- 12
+    p <- 5
+    t <- 4
+    ncomp <- 2
+
+    set.seed(1)
+    test_x <- array(rnorm(n * p * t), dim = c(n, p, t))
+    test_y <- array(rnorm(n * t), dim = c(n, 1, t))
+
+    for (mode in c("regression", "canonical", "tsvdm")) {
+      tpls_obj <- tpls(test_x, test_y, ncomp = ncomp, mode = mode)
+      expect_equal(dim(tpls_obj$x_projected), c(n, ncomp))
+      expect_equal(dim(tpls_obj$y_loadings), c(1, ncomp))
+      expect_true(all(is.finite(tpls_obj$y_projected)))
+    }
+  }
+)

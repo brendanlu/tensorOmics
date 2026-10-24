@@ -54,10 +54,16 @@
 #' @keywords internal
 #' @noRd
 .extract_tensor_columns <- function(tensor, k_t_indices) {
-  return(apply(
+  out <- apply(
     k_t_indices, 2,
     FUN = function(k_t_index) tensor[, k_t_index[1], k_t_index[2]]
-  ))
+  )
+  # apply() simplifies to a vector when the tensor has a single row, so put
+  # the matrix shape back
+  if (is.null(dim(out))) {
+    out <- matrix(out, nrow = dim(tensor)[1])
+  }
+  return(out)
 }
 
 #' Helper function to convert compressed matrix form of the singular values into
